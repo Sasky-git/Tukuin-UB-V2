@@ -1,0 +1,2861 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tukuin — Platform Jual Beli Kebutuhan Mahasiswa UB</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            ub: {
+              navy: '#0F2C59',
+              blue: '#1D4ED8',
+              gold: '#F59E0B',
+              amber: '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Glassmorphism & Ambient Mesh Backgrounds */
+    body {
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Ambient Mesh Background - Light & Dark */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(at 10% 15%, rgba(59, 130, 246, 0.16) 0px, transparent 50%),
+        radial-gradient(at 88% 12%, rgba(245, 158, 11, 0.14) 0px, transparent 48%),
+        radial-gradient(at 75% 85%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        radial-gradient(at 15% 85%, rgba(99, 102, 241, 0.14) 0px, transparent 50%),
+        #F4F7FB;
+      transition: background 0.4s ease;
+    }
+
+    html.dark .ambient-bg {
+      background:
+        radial-gradient(at 12% 15%, rgba(29, 78, 216, 0.25) 0px, transparent 52%),
+        radial-gradient(at 88% 15%, rgba(217, 119, 6, 0.16) 0px, transparent 48%),
+        radial-gradient(at 80% 85%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        radial-gradient(at 15% 85%, rgba(79, 70, 229, 0.20) 0px, transparent 50%),
+        #070B14;
+    }
+
+    /* Glass Card Surfaces */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 10px 30px -5px rgba(15, 44, 89, 0.07);
+    }
+
+    html.dark .glass-panel {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.45);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 6px 24px -4px rgba(15, 44, 89, 0.06);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 32px -6px rgba(15, 44, 89, 0.12);
+      border-color: rgba(59, 130, 246, 0.35);
+    }
+
+    html.dark .glass-card {
+      background: rgba(30, 41, 59, 0.58);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+    }
+
+    html.dark .glass-card:hover {
+      border-color: rgba(96, 165, 250, 0.4);
+      box-shadow: 0 14px 32px -6px rgba(0, 0, 0, 0.55);
+    }
+
+    .glass-input {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(203, 213, 225, 0.8);
+      transition: all 0.2s ease;
+    }
+
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.96);
+      border-color: #2563EB;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      outline: none;
+    }
+
+    html.dark .glass-input {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(71, 85, 105, 0.6);
+      color: #F8FAFC;
+    }
+
+    html.dark .glass-input:focus {
+      background: rgba(15, 23, 42, 0.92);
+      border-color: #60A5FA;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
+    }
+
+    /* KTM Scanner Animation */
+    @keyframes scanLaser {
+      0% { top: 6%; opacity: 0.4; }
+      50% { top: 88%; opacity: 1; }
+      100% { top: 6%; opacity: 0.4; }
+    }
+
+    .scan-laser {
+      animation: scanLaser 2s ease-in-out infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.6);
+    }
+
+    /* Hide scrollbar for horizontal category pills */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="text-slate-800 dark:text-slate-100 min-h-screen flex flex-col pb-20 md:pb-8">
+  <!-- Ambient Background -->
+  <div class="ambient-bg"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-20 right-4 z-[100] flex flex-col gap-2.5 max-w-sm w-[calc(100%-2rem)] pointer-events-none"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-white/50 dark:border-slate-800/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-3">
+      <!-- Brand Logo -->
+      <button onclick="navigateTo('home')" class="flex items-center gap-2.5 text-left group shrink-0">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-ub-navy via-blue-700 to-blue-500 flex items-center justify-center text-white shadow-lg shadow-blue-600/25 group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-display font-extrabold text-xl tracking-tight bg-gradient-to-r from-ub-navy to-blue-600 dark:from-white dark:to-blue-300 bg-clip-text text-transparent">Tukuin</span>
+            <span class="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">UB</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block leading-none mt-0.5">Marketplace Mahasiswa Brawijaya</p>
+        </div>
+      </button>
+
+      <!-- Global Search Bar (Desktop & Tablet) -->
+      <div class="flex-1 max-w-xl hidden sm:block">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input
+            id="global-search-input"
+            type="text"
+            placeholder="Cari diktat kuliah, kalkulator, perabot kost, jas lab..."
+            oninput="handleSearchInput(this.value)"
+            class="w-full pl-10 pr-10 py-2.5 rounded-2xl text-sm glass-input placeholder:text-slate-400"
+          />
+          <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Action Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5">
+        <!-- Theme Toggle -->
+        <button
+          onclick="toggleTheme()"
+          title="Ganti Tema Terang / Gelap"
+          class="p-2.5 rounded-xl glass-card text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-amber-400"
+        >
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+        </button>
+
+        <!-- Wishlist Button -->
+        <button
+          onclick="handleProtectedAction(() => navigateTo('wishlist'))"
+          title="Wishlist Barang Favorit"
+          class="relative p-2.5 rounded-xl glass-card text-slate-600 dark:text-slate-300 hover:text-rose-500 hidden sm:flex"
+        >
+          <i data-lucide="heart" class="w-4 h-4"></i>
+          <span id="wishlist-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
+        </button>
+
+        <!-- Notification Dropdown Trigger -->
+        <div class="relative">
+          <button
+            onclick="toggleNotificationPanel()"
+            title="Notifikasi Pesanan"
+            class="relative p-2.5 rounded-xl glass-card text-slate-600 dark:text-slate-300 hover:text-blue-600"
+          >
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div id="notif-dropdown" class="hidden absolute right-0 mt-2.5 w-80 sm:w-96 rounded-2xl glass-panel p-4 z-50 border border-slate-200/80 dark:border-slate-700/80 shadow-2xl">
+            <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-200/60 dark:border-slate-700/60">
+              <h3 class="font-display font-bold text-sm flex items-center gap-1.5">
+                <i data-lucide="bell-ring" class="w-4 h-4 text-amber-500"></i>
+                Notifikasi Aktivitas
+              </h3>
+              <button onclick="markAllNotificationsRead()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium">Tandai dibaca</button>
+            </div>
+            <div id="notif-list" class="max-h-72 overflow-y-auto space-y-2 text-xs">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sell Button (+) -->
+        <button
+          onclick="handleProtectedAction(() => openSellModal())"
+          class="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-blue-600/25 active:scale-95 transition-all"
+        >
+          <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i>
+          <span class="hidden md:inline">Jual Barang</span>
+        </button>
+
+        <!-- Auth / User Menu Button -->
+        <div id="header-user-area">
+          <!-- Dynamically rendered: Login CTA or User Profile Pill -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="px-4 pb-3 sm:hidden">
+      <div class="relative">
+        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input
+          id="mobile-search-input"
+          type="text"
+          placeholder="Cari kebutuhan kuliah atau barang preloved UB..."
+          oninput="handleSearchInput(this.value)"
+          class="w-full pl-10 pr-4 py-2 rounded-xl text-sm glass-input placeholder:text-slate-400"
+        />
+      </div>
+    </div>
+  </header>
+
+  <!-- Secondary Navigation Pills (Desktop/Tablet) -->
+  <nav class="hidden md:block border-b border-white/40 dark:border-slate-800/60 bg-white/30 dark:bg-slate-900/30 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between text-xs font-medium">
+      <div class="flex items-center gap-2" id="desktop-nav-links">
+        <!-- Rendered dynamically based on role -->
+      </div>
+      <div class="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i> Login Akun Google UB</span>
+        <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500"></i> COD Area Kampus & Malang</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+    <!-- Views are rendered dynamically here -->
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 glass-panel border-t border-white/60 dark:border-slate-800 px-2 py-1.5">
+    <div class="grid grid-cols-5 gap-1 items-center text-[11px] font-medium" id="mobile-bottom-nav">
+      <!-- Rendered dynamically -->
+    </div>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: LOGIN GOOGLE UB (tanpa login demo / KTM simulasi) -->
+  <!-- ===================================================================== -->
+  <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-7 relative max-h-[92vh] overflow-y-auto shadow-2xl">
+      <button onclick="closeModal('auth-modal')" class="absolute top-5 right-5 p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-ub-navy to-blue-600 text-white flex items-center justify-center shadow-md"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+        <div><h2 class="font-display font-bold text-lg sm:text-xl">Masuk ke Tukuin UB</h2><p class="text-xs text-slate-500 dark:text-slate-400">Autentikasi melalui akun Google kampus</p></div>
+      </div>
+      <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 mb-5 text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+        Masuk dengan akun Google. Untuk tugas kelas, admin dapat membatasi hanya email UB atau mengizinkan semua akun Google melalui pengaturan Netlify. Login Google bukan verifikasi KTM atau status akademik.
+      </div>
+      <button onclick="loginGoogle()" class="w-full flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3.5 px-4 font-semibold text-sm shadow-lg shadow-blue-600/25">
+        <svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.61 24.46c0-1.36-.11-2.35-.35-3.38H24v7.6h11.3a9.66 9.66 0 0 1-4.18 6.34v5.24h6.76c3.95-3.64 5.73-9 5.73-15.8Z"/><path fill="#FF3D00" d="M24 44c5.66 0 10.42-1.87 13.88-5.06l-6.76-5.24c-1.88 1.26-4.28 2.01-7.12 2.01-5.49 0-10.14-3.7-11.8-8.68H5.24v5.4A20 20 0 0 0 24 44Z"/><path fill="#4CAF50" d="M12.2 27.03a12.04 12.04 0 0 1 0-7.7v-5.4H5.24a20 20 0 0 0 0 18.5l6.96-5.4Z"/><path fill="#1976D2" d="M24 11.29c3.08 0 5.85 1.06 8.02 3.16l6.02-6.02A19.7 19.7 0 0 0 24 3 20 20 0 0 0 5.24 13.93l6.96 5.4c1.66-4.98 6.31-8.04 11.8-8.04Z"/></svg>
+        Lanjutkan dengan Google
+      </button>
+      <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-4 text-center">Setelah login, lengkapi NIM, fakultas dan nomor WhatsApp di halaman Profil. Data pengguna tersimpan di Firebase.</p>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: DETAIL PRODUK & AJUKAN PESANAN                               -->
+  <!-- ===================================================================== -->
+  <div id="product-detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div id="product-detail-content" class="glass-panel w-full max-w-3xl rounded-3xl overflow-hidden relative max-h-[92vh] overflow-y-auto shadow-2xl">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: FORM JUAL / EDIT BARANG                                      -->
+  <!-- ===================================================================== -->
+  <div id="sell-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="glass-panel w-full max-w-xl rounded-3xl p-6 sm:p-7 relative max-h-[92vh] overflow-y-auto shadow-2xl">
+      <button onclick="closeModal('sell-modal')" class="absolute top-5 right-5 p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <h2 id="sell-modal-title" class="font-display font-bold text-xl mb-1">Pasang Iklan Barang</h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">Jual kebutuhan kuliah atau barang preloved kamu ke sesama mahasiswa UB</p>
+
+      <form id="sell-product-form" onsubmit="handleSaveProduct(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="sell-product-id" value="" />
+
+        <!-- Photo Upload & Preview -->
+        <div>
+          <label class="block font-semibold mb-1.5">Foto Produk *</label>
+          <div class="flex flex-col sm:flex-row items-center gap-4 p-3.5 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/40 dark:bg-slate-900/40">
+            <img id="sell-photo-preview" src="" alt="Preview Produk" class="w-24 h-24 rounded-xl object-cover bg-slate-200 dark:bg-slate-800 shrink-0 border border-white/50" />
+            <div class="flex-1 space-y-2 text-center sm:text-left">
+              <p class="text-slate-600 dark:text-slate-300">Unggah foto asli barang agar pembeli lebih yakin (JPG/PNG).</p>
+              <div class="flex flex-wrap justify-center sm:justify-start gap-2">
+                <label class="cursor-pointer px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold inline-flex items-center gap-1.5">
+                  <i data-lucide="image-plus" class="w-3.5 h-3.5"></i> Pilih Foto
+                  <input type="file" accept="image/*" class="hidden" onchange="handleProductImageUpload(event)" />
+                </label>
+                <button type="button" onclick="cycleSampleProductImage()" class="px-3 py-2 rounded-xl glass-card font-semibold text-slate-700 dark:text-slate-200 inline-flex items-center gap-1.5">
+                  <i data-lucide="shuffle" class="w-3.5 h-3.5"></i> Ganti Ilustrasi Contoh
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Nama Barang *</label>
+          <input id="sell-name" type="text" required placeholder="Contoh: Buku Kalkulus Purcell Edisi 9 Jilid 1" class="w-full px-3.5 py-2.5 rounded-xl glass-input" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Kategori *</label>
+            <select id="sell-category" required class="w-full px-3.5 py-2.5 rounded-xl glass-input">
+              <option value="Buku & Diktat">Buku & Diktat</option>
+              <option value="Elektronik & Gadget">Elektronik & Gadget</option>
+              <option value="Kost & Perabotan">Kost & Perabotan</option>
+              <option value="Alat Praktikum">Alat Praktikum</option>
+              <option value="Fashion & Preloved">Fashion & Preloved</option>
+              <option value="Otomotif & Lainnya">Otomotif & Lainnya</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Kondisi Barang *</label>
+            <select id="sell-condition" required class="w-full px-3.5 py-2.5 rounded-xl glass-input">
+              <option value="Baru">Baru (Segel / Belum Dipakai)</option>
+              <option value="Preloved - Like New">Preloved - Like New (Mulus 95%)</option>
+              <option value="Preloved - Good">Preloved - Good (Layak Pakai)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">Harga (Rp) *</label>
+            <input id="sell-price" type="number" min="1000" step="500" required placeholder="Contoh: 65000" class="w-full px-3.5 py-2.5 rounded-xl glass-input" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Lokasi COD Utama *</label>
+            <select id="sell-cod" required class="w-full px-3.5 py-2.5 rounded-xl glass-input">
+              <option value="Gerbang Veteran UB">Gerbang Veteran UB</option>
+              <option value="Gazebo Perpus Pusat UB">Gazebo Perpus Pusat UB</option>
+              <option value="Area FILKOM / Rektorat">Area FILKOM / Rektorat</option>
+              <option value="Area FEB / FISIP UB">Area FEB / FISIP UB</option>
+              <option value="Kantin CL / Teknik UB">Kantin CL / Teknik UB</option>
+              <option value="Soekarno-Hatta (Suhat)">Soekarno-Hatta (Suhat)</option>
+              <option value="Sumbersari / Watugong">Sumbersari / Watugong</option>
+              <option value="Kerto / Ketawanggede">Kerto / Ketawanggede</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Kontak WhatsApp Penjual *</label>
+          <input id="sell-wa" type="tel" required placeholder="0812xxxxxxxx" class="w-full px-3.5 py-2.5 rounded-xl glass-input" />
+          <p class="text-[10px] text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
+            <i data-lucide="lock" class="w-3 h-3"></i> Privasi terjaga: Nomor WhatsApp hanya ditampilkan ke pembeli setelah kedua pihak sepakat Fix Deal.
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">Deskripsi & Kelengkapan Barang *</label>
+          <textarea id="sell-desc" rows="3" required placeholder="Jelaskan detail kondisi, minus (jika ada), kelengkapan, dan jadwal COD yang bisa..." class="w-full px-3.5 py-2.5 rounded-xl glass-input"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeModal('sell-modal')" class="px-4 py-2.5 rounded-xl glass-card font-semibold">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold shadow-lg shadow-blue-600/25">
+            Simpan & Tayangkan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 4: RUANG CHAT & NEGOSIASI IN-APP (FIX DEAL SYSTEM)              -->
+  <!-- ===================================================================== -->
+  <div id="chat-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div id="chat-modal-content" class="glass-panel w-full max-w-xl rounded-3xl overflow-hidden flex flex-col max-h-[88vh] shadow-2xl">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 5: KONFIRMASI CUSTOM / LAPORAN / PEMBATALAN                     -->
+  <!-- ===================================================================== -->
+  <div id="action-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div id="action-modal-content" class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-2xl">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- APPLICATION LOGIC & REACTIVE STATE ENGINE                             -->
+  <!-- ===================================================================== -->
+  <script>
+    // =========================================================================
+    // 1. SVG ARTWORK GENERATOR (Crisp, Zero-Broken-Link Product Illustrations)
+    // =========================================================================
+    function createProductArtwork(bg1, bg2, iconType, label) {
+      const icons = {
+        book: `<rect x="65" y="45" width="70" height="95" rx="8" fill="#ffffff" fill-opacity="0.92"/><path d="M75 45v95M85 65h38M85 80h30M85 95h34" stroke="${bg1}" stroke-width="4" stroke-linecap="round"/><circle cx="122" cy="118" r="10" fill="#F59E0B"/>`,
+        calc: `<rect x="68" y="38" width="64" height="108" rx="10" fill="#1E293B"/><rect x="76" y="48" width="48" height="24" rx="4" fill="#A7F3D0"/><circle cx="84" cy="88" r="5" fill="#94A3B8"/><circle cx="100" cy="88" r="5" fill="#94A3B8"/><circle cx="116" cy="88" r="5" fill="#F59E0B"/><circle cx="84" cy="105" r="5" fill="#94A3B8"/><circle cx="100" cy="105" r="5" fill="#94A3B8"/><circle cx="116" cy="105" r="5" fill="#94A3B8"/><rect x="79" y="118" width="42" height="12" rx="4" fill="#3B82F6"/>`,
+        desk: `<rect x="42" y="75" width="116" height="14" rx="5" fill="#FDE68A"/><path d="M55 89l-8 46M145 89l8 46M65 89l6 38M135 89l-6 38" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/><rect x="72" y="53" width="56" height="22" rx="4" fill="#ffffff" fill-opacity="0.85"/>`,
+        lab: `<path d="M72 44h56l14 30-16 10-8-16v68H82V68l-8 16-16-10 14-30z" fill="#ffffff" fill-opacity="0.95"/><path d="M100 44v92" stroke="${bg1}" stroke-width="3"/><circle cx="112" cy="82" r="5" fill="#10B981"/>`,
+        mouse: `<rect x="76" y="44" width="48" height="92" rx="24" fill="#ffffff" fill-opacity="0.95"/><path d="M100 44v34" stroke="${bg1}" stroke-width="3"/><rect x="97" y="54" width="6" height="14" rx="3" fill="#F59E0B"/>`,
+        hoodie: `<path d="M74 48c8-10 44-10 52 0l22 26-16 14-10-12v58H78V76L68 88 52 74l22-26z" fill="#0F2C59"/><circle cx="100" cy="52" r="10" fill="#F59E0B"/><path d="M88 92h24" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>`,
+        stand: `<path d="M55 125h90M68 125l42-62 24 62" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="110" cy="63" r="6" fill="#F59E0B"/>`,
+        lamp: `<path d="M70 132h60M100 132V82l28-26" stroke="#ffffff" stroke-width="7" stroke-linecap="round" fill="none"/><polygon points="116,44 146,58 132,74 108,58" fill="#F59E0B"/>`
+      };
+
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="400" height="360">
+        <defs>
+          <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${bg1}"/>
+            <stop offset="100%" stop-color="${bg2}"/>
+          </linearGradient>
+        </defs>
+        <rect width="200" height="180" fill="url(#g)"/>
+        <circle cx="170" cy="25" r="45" fill="#ffffff" fill-opacity="0.08"/>
+        <circle cx="25" cy="155" r="55" fill="#ffffff" fill-opacity="0.08"/>
+        ${icons[iconType] || icons.book}
+        <text x="100" y="164" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ffffff" fill-opacity="0.9" text-anchor="middle">${label}</text>
+      </svg>`;
+
+      return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+    }
+
+    const SAMPLE_ARTWORKS = [
+      createProductArtwork('#1D4ED8', '#3B82F6', 'book', 'BUKU & DIKTAT UB'),
+      createProductArtwork('#0F766E', '#14B8A6', 'calc', 'ELEKTRONIK KAMPUS'),
+      createProductArtwork('#B45309', '#F59E0B', 'desk', 'PERABOTAN KOST'),
+      createProductArtwork('#047857', '#10B981', 'lab', 'ALAT PRAKTIKUM'),
+      createProductArtwork('#4338CA', '#6366F1', 'mouse', 'AKSESORIS LAPTOP'),
+      createProductArtwork('#1E3A8A', '#2563EB', 'hoodie', 'PRELOVED MAHASISWA'),
+      createProductArtwork('#334155', '#64748B', 'stand', 'PERLENGKAPAN KULIAH'),
+      createProductArtwork('#7C3AED', '#A855F7', 'lamp', 'LAMPU BELAJAR')
+    ];
+
+    let sampleImageIndex = 0;
+
+    // =========================================================================
+    // 2. INITIAL APPLICATION STATE (Users, Products, Orders, Chats, Reports)
+    // =========================================================================
+    const state = {
+      currentUser: null, // Null means guest (can browse, must verify KTM UB to transact)
+      currentView: 'home', // 'home' | 'transactions' | 'wishlist' | 'profile' | 'admin'
+      transactionTab: 'purchases', // 'purchases' | 'sales' | 'my-products'
+      adminTab: 'products', // 'products' | 'users' | 'transactions' | 'reports'
+      searchQuery: '',
+      filters: {
+        category: 'Semua',
+        condition: 'Semua',
+        cod: 'Semua Lokasi',
+        priceRange: 'Semua Harga',
+        sortBy: 'newest',
+        showReserved: true
+      },
+      users: [
+        {
+          id: 'u1',
+          nim: '235150200111042',
+          name: 'Nadia Putri Maharani',
+          fakultas: 'FILKOM',
+          angkatan: '2023',
+          wa: '081234567890',
+          role: 'student',
+          verified: true,
+          status: 'active',
+          wishlist: ['p1', 'p3']
+        },
+        {
+          id: 'u2',
+          nim: '225020207111019',
+          name: 'Raka Pratama Wijaya',
+          fakultas: 'FEB',
+          angkatan: '2022',
+          wa: '085711223344',
+          role: 'student',
+          verified: true,
+          status: 'active',
+          wishlist: ['p2']
+        },
+        {
+          id: 'u3',
+          nim: '215060101111027',
+          name: 'Dimas Arya Saputra',
+          fakultas: 'FT',
+          angkatan: '2021',
+          wa: '082199887766',
+          role: 'student',
+          verified: true,
+          status: 'active',
+          wishlist: []
+        },
+        {
+          id: 'u4',
+          nim: '245120100111055',
+          name: 'Siti Aisyah Nur',
+          fakultas: 'FISIP',
+          angkatan: '2024',
+          wa: '087855443322',
+          role: 'student',
+          verified: true,
+          status: 'active',
+          wishlist: []
+        },
+        {
+          id: 'admin',
+          nim: '190000000000001',
+          name: 'Admin Tukuin UB',
+          fakultas: 'Rektorat / Kemahasiswaan',
+          angkatan: 'Staff',
+          wa: '081100009999',
+          role: 'admin',
+          verified: true,
+          status: 'active',
+          wishlist: []
+        }
+      ],
+      products: [
+        {
+          id: 'p1',
+          sellerId: 'u2',
+          name: 'Buku Kalkulus Purcell Edisi 9 Jilid 1 (Original)',
+          category: 'Buku & Diktat',
+          condition: 'Preloved - Like New',
+          price: 75000,
+          cod: 'Gazebo Perpus Pusat UB',
+          wa: '085711223344',
+          description: 'Kondisi 95% mulus, tidak ada coretan stabilo, sampul plastik rapi. Cocok banget buat maba Teknik, FILKOM, atau FMIPA semester 1-2. Bisa COD area Perpus Pusat atau Gerbang Veteran.',
+          image: SAMPLE_ARTWORKS[0],
+          status: 'AVAILABLE',
+          featured: true,
+          createdAt: Date.now() - 1000 * 60 * 60 * 2
+        },
+        {
+          id: 'p2',
+          sellerId: 'u3',
+          name: 'Kalkulator Scientific Casio fx-991EX ClassWiz',
+          category: 'Elektronik & Gadget',
+          condition: 'Preloved - Like New',
+          price: 185000,
+          cod: 'Kantin CL / Teknik UB',
+          wa: '082199887766',
+          description: 'Dipakai 2 semester saja, tombol empuk semua, layar jernih, baterai awet, lengkap dengan tutup geser original. Dijual karena sudah lulus mata kuliah perhitungan.',
+          image: SAMPLE_ARTWORKS[1],
+          status: 'AVAILABLE',
+          featured: true,
+          createdAt: Date.now() - 1000 * 60 * 60 * 5
+        },
+        {
+          id: 'p3',
+          sellerId: 'u3',
+          name: 'Jas Laboratorium Lengan Panjang Ukuran L',
+          category: 'Alat Praktikum',
+          condition: 'Preloved - Good',
+          price: 60000,
+          cod: 'Gerbang Veteran UB',
+          wa: '082199887766',
+          description: 'Bahan katun tebal tidak panas, sudah dicuci bersih dan wangi laundry. Ada bordir saku depan standar praktikum kimia/biologi/teknik.',
+          image: SAMPLE_ARTWORKS[3],
+          status: 'AVAILABLE',
+          featured: true,
+          createdAt: Date.now() - 1000 * 60 * 60 * 8
+        },
+        {
+          id: 'p4',
+          sellerId: 'u2',
+          name: 'Meja Belajar Lipat Portable Kayu Minimalis',
+          category: 'Kost & Perabotan',
+          condition: 'Preloved - Like New',
+          price: 55000,
+          cod: 'Soekarno-Hatta (Suhat)',
+          wa: '085711223344',
+          description: 'Ukuran 60x40 cm, ada slot tablet/HP dan cup holder. Kaki aluminium kokoh anti slip. Cocok buat nugas di kasur kost.',
+          image: SAMPLE_ARTWORKS[2],
+          status: 'AVAILABLE',
+          featured: true,
+          createdAt: Date.now() - 1000 * 60 * 60 * 12
+        },
+        {
+          id: 'p5',
+          sellerId: 'u4',
+          name: 'Mouse Wireless Silent Click Logitech M331',
+          category: 'Elektronik & Gadget',
+          condition: 'Baru',
+          price: 145000,
+          cod: 'Area FEB / FISIP UB',
+          wa: '087855443322',
+          description: 'Barang baru hadiah lomba, belum pernah dipakai sama sekali (segel box). Tidak berisik saat dipakai nugas di Perpus Pusat UB.',
+          image: SAMPLE_ARTWORKS[4],
+          status: 'AVAILABLE',
+          featured: false,
+          createdAt: Date.now() - 1000 * 60 * 60 * 18
+        },
+        {
+          id: 'p6',
+          sellerId: 'u1',
+          name: 'Hoodie Varsity Brawijaya Navy Gold (Size XL)',
+          category: 'Fashion & Preloved',
+          condition: 'Preloved - Like New',
+          price: 110000,
+          cod: 'Area FILKOM / Rektorat',
+          wa: '081234567890',
+          description: 'Bahan fleece tebal hangat untuk cuaca Malang malam hari. Sablon bordir rapi, pemakaian pribadi jarang dipakai.',
+          image: SAMPLE_ARTWORKS[5],
+          status: 'RESERVED',
+          featured: false,
+          createdAt: Date.now() - 1000 * 60 * 60 * 24
+        },
+        {
+          id: 'p7',
+          sellerId: 'u4',
+          name: 'Stand Laptop Aluminium Ergonomis Lipat',
+          category: 'Elektronik & Gadget',
+          condition: 'Preloved - Good',
+          price: 45000,
+          cod: 'Sumbersari / Watugong',
+          wa: '087855443322',
+          description: 'Bikin leher tidak pegal saat ngoding atau ngerjain skripsi. Kuat menopang laptop 15.6 inch, bonus pouch kain.',
+          image: SAMPLE_ARTWORKS[6],
+          status: 'AVAILABLE',
+          featured: false,
+          createdAt: Date.now() - 1000 * 60 * 60 * 30
+        },
+        {
+          id: 'p8',
+          sellerId: 'u2',
+          name: 'Lampu Meja Belajar LED Rechargeable 3 Mode',
+          category: 'Kost & Perabotan',
+          condition: 'Baru',
+          price: 40000,
+          cod: 'Kerto / Ketawanggede',
+          wa: '085711223344',
+          description: 'Cahaya putih, warm white, dan natural. Bisa dicas pakai kabel Type-C, sangat berguna kalau kost mati lampu.',
+          image: SAMPLE_ARTWORKS[7],
+          status: 'AVAILABLE',
+          featured: false,
+          createdAt: Date.now() - 1000 * 60 * 60 * 36
+        }
+      ],
+      orders: [
+        {
+          id: 'ord-101',
+          productId: 'p6',
+          buyerId: 'u2',
+          sellerId: 'u1',
+          status: 'MENUNGGU_KONFIRMASI', // 'MENUNGGU_KONFIRMASI' | 'FIX_DEAL' | 'SELESAI' | 'DIBATALKAN'
+          buyerFixDeal: true,
+          sellerFixDeal: false,
+          note: 'Halo kak, minat hoodie-nya. Bisa COD besok jam 1 siang di depan gedung F FILKOM?',
+          cancelReason: '',
+          createdAt: Date.now() - 1000 * 60 * 45,
+          messages: [
+            {
+              senderId: 'u2',
+              text: 'Halo kak Nadia, hoodie Brawijaya-nya masih ready? Bisa COD besok jam 1 siang di FILKOM?',
+              time: '13:15'
+            },
+            {
+              senderId: 'u1',
+              text: 'Halo kak Raka! Masih ready kak, besok jam 1 siang aku pas selesai kelas di gedung F, bisa banget.',
+              time: '13:18'
+            }
+          ]
+        }
+      ],
+      reports: [
+        {
+          id: 'rep-1',
+          targetType: 'product',
+          targetId: 'p7',
+          reporterId: 'u2',
+          reason: 'Mohon dicek apakah foto sesuai dengan kondisi barang terbaru.',
+          status: 'pending', // 'pending' | 'resolved' | 'dismissed'
+          createdAt: Date.now() - 1000 * 60 * 120
+        }
+      ],
+      notifications: [
+        {
+          id: 'n1',
+          userId: 'u1',
+          title: 'Pesanan Baru Masuk!',
+          message: 'Raka Pratama mengajukan pesanan untuk "Hoodie Varsity Brawijaya Navy Gold".',
+          read: false,
+          time: '45 menit lalu'
+        },
+        {
+          id: 'n2',
+          userId: 'u2',
+          title: 'Pesanan Berhasil Diajukan',
+          message: 'Status produk Hoodie Varsity berubah menjadi RESERVED. Diskusikan jadwal COD via chat.',
+          read: false,
+          time: '45 menit lalu'
+        }
+      ]
+    };
+
+    // =========================================================================
+    // 3. UTILITY & HELPER FUNCTIONS
+    // =========================================================================
+    function formatRupiah(amount) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(amount);
+    }
+
+    function getUserById(userId) {
+      return state.users.find(u => u.id === userId) || {
+        id: 'unknown',
+        name: 'Mahasiswa UB',
+        fakultas: 'UB',
+        angkatan: '2023',
+        nim: '235000000000000',
+        wa: '081200000000'
+      };
+    }
+
+    function getProductById(productId) {
+      return state.products.find(p => p.id === productId);
+    }
+
+    function showToast(title, message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'border-emerald-500/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
+        error: 'border-rose-500/50 bg-rose-500/15 text-rose-700 dark:text-rose-300',
+        warning: 'border-amber-500/50 bg-amber-500/15 text-amber-700 dark:text-amber-300',
+        info: 'border-blue-500/50 bg-blue-500/15 text-blue-700 dark:text-blue-300'
+      };
+      const icons = {
+        success: 'check-circle-2',
+        error: 'alert-circle',
+        warning: 'alert-triangle',
+        info: 'info'
+      };
+
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto glass-panel rounded-2xl p-3.5 border ${colors[type] || colors.info} shadow-xl flex items-start gap-3 transition-all duration-300 translate-x-4 opacity-0`;
+      toast.innerHTML = `
+        <i data-lucide="${icons[type] || 'info'}" class="w-5 h-5 shrink-0 mt-0.5"></i>
+        <div class="flex-1 text-xs">
+          <p class="font-bold text-slate-900 dark:text-white">${title}</p>
+          <p class="text-slate-600 dark:text-slate-300 mt-0.5">${message}</p>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-x-4', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-4');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    function pushNotification(userId, title, message) {
+      state.notifications.unshift({
+        id: 'notif-' + Date.now() + Math.random().toString(36).slice(2, 5),
+        userId,
+        title,
+        message,
+        read: false,
+        time: 'Baru saja'
+      });
+      updateHeaderBadges();
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // =========================================================================
+    // 4. THEME MANAGEMENT (LIGHT / DARK MODE)
+    // =========================================================================
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+      showToast(
+        isDark ? 'Mode Gelap Aktif' : 'Mode Terang Aktif',
+        isDark ? 'Tampilan nyaman untuk browsing malam hari.' : 'Tampilan cerah khas kampus Brawijaya.',
+        'info'
+      );
+    }
+
+    // =========================================================================
+    // 5. AUTHENTICATION & KTM UB SCANNER
+    // =========================================================================
+    let pendingProtectedCallback = null;
+
+    function handleProtectedAction(callback) {
+      if (!state.currentUser) {
+        pendingProtectedCallback = callback;
+        openAuthModal();
+        showToast('Login Google Diperlukan', 'Silakan masuk menggunakan akun Google UB.', 'warning');
+        return;
+      }
+      if (state.currentUser.status === 'suspended') {
+        showToast('Akun Ditangguhkan', 'Akun Anda sedang dalam peninjauan Admin Tukuin UB.', 'error');
+        return;
+      }
+      callback();
+    }
+
+    function openAuthModal() {
+      switchAuthTab('scan');
+      openModal('auth-modal');
+    }
+
+    function switchAuthTab(tab) {
+      const scanPanel = document.getElementById('auth-panel-scan');
+      const manualPanel = document.getElementById('auth-panel-manual');
+      const tabScan = document.getElementById('tab-scan-ktm');
+      const tabManual = document.getElementById('tab-manual-ktm');
+
+      if (tab === 'scan') {
+        scanPanel.classList.remove('hidden');
+        manualPanel.classList.add('hidden');
+        tabScan.className = 'py-2.5 rounded-xl bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm transition-all flex items-center justify-center gap-1.5';
+        tabManual.className = 'py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5';
+      } else {
+        scanPanel.classList.add('hidden');
+        manualPanel.classList.remove('hidden');
+        tabManual.className = 'py-2.5 rounded-xl bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm transition-all flex items-center justify-center gap-1.5';
+        tabScan.className = 'py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5';
+      }
+    }
+
+    function simulateKtmUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const randomNim = '235150' + Math.floor(100000000 + Math.random() * 899999999);
+      document.getElementById('scan-preview-nim').textContent = randomNim;
+      document.getElementById('scan-preview-name').textContent = 'Mahasiswa UB (' + file.name.split('.')[0].slice(0, 14) + ')';
+      showToast('Foto KTM Diunggah', 'Klik "Mulai Scan & Masuk" untuk memverifikasi data KTM.', 'info');
+    }
+
+    function runKtmAutoScan() {
+      const laser = document.getElementById('ktm-scanner-laser');
+      laser.classList.remove('hidden');
+      showToast('Memindai KTM UB...', 'Membaca NIM, Nama, dan status kemahasiswaan aktif...', 'info');
+
+      setTimeout(() => {
+        laser.classList.add('hidden');
+        const scannedNim = document.getElementById('scan-preview-nim').textContent.trim();
+        const scannedName = document.getElementById('scan-preview-name').textContent.trim();
+        const scannedFakultas = document.getElementById('scan-preview-fakultas').textContent.trim();
+        const scannedAngkatan = document.getElementById('scan-preview-angkatan').textContent.trim();
+
+        let existingUser = state.users.find(u => u.nim === scannedNim);
+        if (!existingUser) {
+          existingUser = {
+            id: 'u-' + Date.now(),
+            nim: scannedNim,
+            name: scannedName,
+            fakultas: scannedFakultas,
+            angkatan: scannedAngkatan,
+            wa: '081234567899',
+            role: 'student',
+            verified: true,
+            status: 'active',
+            wishlist: []
+          };
+          state.users.push(existingUser);
+        }
+        completeLogin(existingUser);
+      }, 1100);
+    }
+
+    function handleManualAuthSubmit(event) {
+      event.preventDefault();
+      const nim = document.getElementById('reg-nim').value.trim();
+      const name = document.getElementById('reg-name').value.trim();
+      const fakultas = document.getElementById('reg-fakultas').value;
+      const angkatan = document.getElementById('reg-angkatan').value;
+      const wa = document.getElementById('reg-wa').value.trim();
+
+      if (nim.length < 10) {
+        showToast('NIM Tidak Valid', 'Masukkan NIM Universitas Brawijaya yang benar.', 'error');
+        return;
+      }
+
+      let user = state.users.find(u => u.nim === nim);
+      if (user) {
+        user.name = name;
+        user.fakultas = fakultas;
+        user.angkatan = angkatan;
+        user.wa = wa;
+      } else {
+        user = {
+          id: 'u-' + Date.now(),
+          nim,
+          name,
+          fakultas,
+          angkatan,
+          wa,
+          role: 'student',
+          verified: true,
+          status: 'active',
+          wishlist: []
+        };
+        state.users.push(user);
+      }
+      completeLogin(user);
+    }
+
+    function loginAsDemo(userId) {
+      const user = state.users.find(u => u.id === userId);
+      if (user) {
+        completeLogin(user);
+      }
+    }
+
+    function completeLogin(user) {
+      state.currentUser = user;
+      closeModal('auth-modal');
+      renderChrome();
+      renderCurrentView();
+      showToast('Login Berhasil!', `Selamat datang, ${user.name} (${user.fakultas})`, 'success');
+
+      if (pendingProtectedCallback) {
+        const cb = pendingProtectedCallback;
+        pendingProtectedCallback = null;
+        cb();
+      }
+    }
+
+    function logoutUser() {
+      state.currentUser = null;
+      state.currentView = 'home';
+      renderChrome();
+      renderCurrentView();
+      showToast('Berhasil Keluar', 'Anda telah keluar dari sesi akun UB.', 'info');
+    }
+
+    // =========================================================================
+    // 6. NAVIGATION & CHROME RENDERING
+    // =========================================================================
+    function navigateTo(view, subTab = null) {
+      if (view !== 'home' && !state.currentUser) {
+        handleProtectedAction(() => navigateTo(view, subTab));
+        return;
+      }
+      if (view === 'admin' && state.currentUser?.role !== 'admin') {
+        showToast('Akses Ditolak', 'Halaman ini khusus untuk Admin Tukuin UB.', 'error');
+        return;
+      }
+      state.currentView = view;
+      if (view === 'transactions' && subTab) {
+        state.transactionTab = subTab;
+      }
+      renderChrome();
+      renderCurrentView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderChrome() {
+      // 1. Header User Area
+      const userArea = document.getElementById('header-user-area');
+      if (!state.currentUser) {
+        userArea.innerHTML = `
+          <button onclick="openAuthModal()" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl glass-card border-blue-500/40 text-blue-700 dark:text-blue-300 font-semibold text-xs sm:text-sm hover:bg-blue-600 hover:text-white transition-all">
+            <i data-lucide="scan-line" class="w-4 h-4"></i>
+            <span>Masuk Google</span>
+          </button>
+        `;
+      } else {
+        const u = state.currentUser;
+        const initials = u.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+        userArea.innerHTML = `
+          <button onclick="navigateTo('profile')" class="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl glass-card hover:border-blue-500 transition-all">
+            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-ub-navy to-blue-600 text-white font-bold text-xs flex items-center justify-center">
+              ${initials}
+            </div>
+            <div class="text-left hidden lg:block">
+              <p class="text-xs font-bold leading-tight max-w-[110px] truncate">${u.name}</p>
+              <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium leading-tight">${u.fakultas}</p>
+            </div>
+          </button>
+        `;
+      }
+
+      // 2. Desktop Navigation Links
+      const desktopNav = document.getElementById('desktop-nav-links');
+      const isAdmin = state.currentUser?.role === 'admin';
+      const navItems = [
+        { id: 'home', label: 'Beranda Katalog', icon: 'store' },
+        { id: 'transactions', label: 'Pesanan & Lapak Saya', icon: 'shopping-bag' },
+        { id: 'wishlist', label: 'Wishlist Favorit', icon: 'heart' },
+        { id: 'profile', label: 'Profil & Akun UB', icon: 'id-card' }
+      ];
+      if (isAdmin) {
+        navItems.push({ id: 'admin', label: 'Dashboard Admin', icon: 'shield-alert' });
+      }
+
+      desktopNav.innerHTML = navItems.map(item => {
+        const active = state.currentView === item.id;
+        return `
+          <button
+            onclick="navigateTo('${item.id}')"
+            class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all ${
+              active
+                ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-white/60 dark:hover:bg-slate-800/60'
+            }"
+          >
+            <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i>
+            <span>${item.label}</span>
+          </button>
+        `;
+      }).join('');
+
+      // 3. Mobile Bottom Navigation
+      const mobileNav = document.getElementById('mobile-bottom-nav');
+      const mobileItems = [
+        { id: 'home', label: 'Beranda', icon: 'home', action: `navigateTo('home')` },
+        { id: 'wishlist', label: 'Wishlist', icon: 'heart', action: `navigateTo('wishlist')` },
+        { id: 'sell', label: 'Jual', icon: 'plus-circle', action: `handleProtectedAction(() => openSellModal())`, highlight: true },
+        { id: 'transactions', label: 'Transaksi', icon: 'receipt', action: `navigateTo('transactions')` },
+        {
+          id: isAdmin ? 'admin' : 'profile',
+          label: isAdmin ? 'Admin' : 'Akun',
+          icon: isAdmin ? 'shield-alert' : 'user',
+          action: `navigateTo('${isAdmin ? 'admin' : 'profile'}')`
+        }
+      ];
+
+      mobileNav.innerHTML = mobileItems.map(item => {
+        const active = state.currentView === item.id;
+        if (item.highlight) {
+          return `
+            <button onclick="${item.action}" class="flex flex-col items-center justify-center py-1 text-blue-600 dark:text-blue-400 font-bold">
+              <div class="w-9 h-9 -mt-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/30">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+              </div>
+              <span class="mt-0.5">${item.label}</span>
+            </button>
+          `;
+        }
+        return `
+          <button onclick="${item.action}" class="flex flex-col items-center justify-center py-1 rounded-xl ${active ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-400'}">
+            <i data-lucide="${item.icon}" class="w-4 h-4 mb-0.5"></i>
+            <span>${item.label}</span>
+          </button>
+        `;
+      }).join('');
+
+      updateHeaderBadges();
+      lucide.createIcons();
+    }
+
+    function updateHeaderBadges() {
+      const wishlistBadge = document.getElementById('wishlist-badge');
+      const notifBadge = document.getElementById('notif-badge');
+
+      if (state.currentUser) {
+        const wCount = state.currentUser.wishlist?.length || 0;
+        if (wCount > 0) {
+          wishlistBadge.textContent = wCount;
+          wishlistBadge.classList.remove('hidden');
+        } else {
+          wishlistBadge.classList.add('hidden');
+        }
+
+        const myNotifs = state.notifications.filter(n => n.userId === state.currentUser.id && !n.read);
+        if (myNotifs.length > 0) {
+          notifBadge.textContent = myNotifs.length;
+          notifBadge.classList.remove('hidden');
+        } else {
+          notifBadge.classList.add('hidden');
+        }
+      } else {
+        wishlistBadge.classList.add('hidden');
+        notifBadge.classList.add('hidden');
+      }
+      renderNotificationList();
+    }
+
+    function toggleNotificationPanel() {
+      const dropdown = document.getElementById('notif-dropdown');
+      dropdown.classList.toggle('hidden');
+      renderNotificationList();
+    }
+
+    function renderNotificationList() {
+      const list = document.getElementById('notif-list');
+      if (!state.currentUser) {
+        list.innerHTML = `<p class="text-slate-500 text-center py-4">Silakan login dengan Google untuk melihat notifikasi pesanan Anda.</p>`;
+        return;
+      }
+      const userNotifs = state.notifications.filter(n => n.userId === state.currentUser.id);
+      if (userNotifs.length === 0) {
+        list.innerHTML = `<p class="text-slate-500 text-center py-4">Belum ada notifikasi aktivitas terbaru.</p>`;
+        return;
+      }
+      list.innerHTML = userNotifs.map(n => `
+        <div onclick="navigateTo('transactions'); toggleNotificationPanel();" class="cursor-pointer p-2.5 rounded-xl transition-colors ${n.read ? 'bg-slate-100/50 dark:bg-slate-800/40' : 'bg-blue-500/10 border border-blue-500/25'}">
+          <div class="flex justify-between items-start gap-2">
+            <p class="font-bold text-slate-800 dark:text-slate-100">${n.title}</p>
+            <span class="text-[10px] text-slate-400 shrink-0">${n.time}</span>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">${n.message}</p>
+        </div>
+      `).join('');
+    }
+
+    function markAllNotificationsRead() {
+      if (!state.currentUser) return;
+      state.notifications.forEach(n => {
+        if (n.userId === state.currentUser.id) n.read = true;
+      });
+      updateHeaderBadges();
+    }
+
+    // =========================================================================
+    // 7. SEARCH & FILTER LOGIC
+    // =========================================================================
+    function handleSearchInput(val) {
+      state.searchQuery = val.trim().toLowerCase();
+      document.getElementById('global-search-input').value = val;
+      document.getElementById('mobile-search-input').value = val;
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (val.length > 0) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+
+      if (state.currentView !== 'home') {
+        state.currentView = 'home';
+        renderChrome();
+      }
+      renderCurrentView();
+    }
+
+    function clearSearch() {
+      handleSearchInput('');
+    }
+
+    function setCategoryFilter(cat) {
+      state.filters.category = cat;
+      renderCurrentView();
+    }
+
+    function updateFilter(key, value) {
+      state.filters[key] = value;
+      renderCurrentView();
+    }
+
+    function resetAllFilters() {
+      state.searchQuery = '';
+      document.getElementById('global-search-input').value = '';
+      document.getElementById('mobile-search-input').value = '';
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      state.filters = {
+        category: 'Semua',
+        condition: 'Semua',
+        cod: 'Semua Lokasi',
+        priceRange: 'Semua Harga',
+        sortBy: 'newest',
+        showReserved: true
+      };
+      renderCurrentView();
+    }
+
+    function getFilteredProducts() {
+      // Automatically exclude SOLD products from public catalog (Requirement D)
+      let items = state.products.filter(p => p.status !== 'SOLD');
+
+      if (!state.filters.showReserved) {
+        items = items.filter(p => p.status === 'AVAILABLE');
+      }
+
+      if (state.searchQuery) {
+        items = items.filter(p =>
+          p.name.toLowerCase().includes(state.searchQuery) ||
+          p.category.toLowerCase().includes(state.searchQuery) ||
+          p.description.toLowerCase().includes(state.searchQuery) ||
+          p.cod.toLowerCase().includes(state.searchQuery)
+        );
+      }
+
+      if (state.filters.category !== 'Semua') {
+        items = items.filter(p => p.category === state.filters.category);
+      }
+
+      if (state.filters.condition !== 'Semua') {
+        items = items.filter(p => p.condition === state.filters.condition);
+      }
+
+      if (state.filters.cod !== 'Semua Lokasi') {
+        items = items.filter(p => p.cod === state.filters.cod);
+      }
+
+      if (state.filters.priceRange !== 'Semua Harga') {
+        items = items.filter(p => {
+          if (state.filters.priceRange === '< 50rb') return p.price < 50000;
+          if (state.filters.priceRange === '50rb - 150rb') return p.price >= 50000 && p.price <= 150000;
+          if (state.filters.priceRange === '> 150rb') return p.price > 150000;
+          return true;
+        });
+      }
+
+      // Sorting
+      items.sort((a, b) => {
+        if (state.filters.sortBy === 'price-asc') return a.price - b.price;
+        if (state.filters.sortBy === 'price-desc') return b.price - a.price;
+        return b.createdAt - a.createdAt;
+      });
+
+      return items;
+    }
+
+    // =========================================================================
+    // 8. MAIN VIEW ROUTER & RENDERERS
+    // =========================================================================
+    function renderCurrentView() {
+      const main = document.getElementById('main-content');
+      switch (state.currentView) {
+        case 'home':
+          main.innerHTML = renderHomeView();
+          break;
+        case 'transactions':
+          main.innerHTML = renderTransactionsView();
+          break;
+        case 'wishlist':
+          main.innerHTML = renderWishlistView();
+          break;
+        case 'profile':
+          main.innerHTML = renderProfileView();
+          break;
+        case 'admin':
+          main.innerHTML = renderAdminView();
+          break;
+        default:
+          main.innerHTML = renderHomeView();
+      }
+      lucide.createIcons();
+    }
+
+    // -------------------------------------------------------------------------
+    // VIEW A: BERANDA / DASHBOARD PENGGUNA
+    // -------------------------------------------------------------------------
+    function renderHomeView() {
+      const categories = [
+        { name: 'Semua', icon: 'layout-grid' },
+        { name: 'Buku & Diktat', icon: 'book-open' },
+        { name: 'Elektronik & Gadget', icon: 'laptop' },
+        { name: 'Kost & Perabotan', icon: 'lamp' },
+        { name: 'Alat Praktikum', icon: 'flask-conical' },
+        { name: 'Fashion & Preloved', icon: 'shirt' },
+        { name: 'Otomotif & Lainnya', icon: 'package' }
+      ];
+
+      const codLocations = [
+        'Semua Lokasi',
+        'Gerbang Veteran UB',
+        'Gazebo Perpus Pusat UB',
+        'Area FILKOM / Rektorat',
+        'Area FEB / FISIP UB',
+        'Kantin CL / Teknik UB',
+        'Soekarno-Hatta (Suhat)',
+        'Sumbersari / Watugong',
+        'Kerto / Ketawanggede'
+      ];
+
+      const filteredProducts = getFilteredProducts();
+      const recommendedProducts = state.products.filter(p => p.featured && p.status === 'AVAILABLE').slice(0, 4);
+
+      const isDefaultBrowsing =
+        !state.searchQuery &&
+        state.filters.category === 'Semua' &&
+        state.filters.condition === 'Semua' &&
+        state.filters.cod === 'Semua Lokasi' &&
+        state.filters.priceRange === 'Semua Harga';
+
+      return `
+        <!-- Hero Glass Banner -->
+        <section class="glass-panel rounded-3xl p-5 sm:p-8 mb-6 relative overflow-hidden">
+          <div class="absolute -right-12 -top-12 w-56 h-56 rounded-full bg-gradient-to-br from-blue-500/20 to-amber-500/20 blur-2xl pointer-events-none"></div>
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+            <div class="max-w-2xl">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-semibold mb-3">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Khusus Civitas Mahasiswa Universitas Brawijaya
+              </div>
+              <h1 class="font-display font-extrabold text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-tight">
+                Jual Beli Kebutuhan Kuliah & Preloved <span class="bg-gradient-to-r from-blue-600 to-amber-500 bg-clip-text text-transparent">Lebih Praktis & Hemat.</span>
+              </h1>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2.5 leading-relaxed">
+                Temukan buku diktat, alat praktikum, hingga perabot kost dari sesama mahasiswa UB. Aman dengan login Google & ketemuan COD langsung di area kampus.
+              </p>
+              <div class="flex flex-wrap items-center gap-3 mt-5">
+                <button onclick="handleProtectedAction(() => openSellModal())" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-ub-navy to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-600/25 flex items-center gap-2">
+                  <i data-lucide="plus-circle" class="w-4 h-4"></i> Mulai Jual Barang
+                </button>
+                ${!state.currentUser ? `
+                  <button onclick="openAuthModal()" class="px-4 py-2.5 rounded-xl glass-card text-xs sm:text-sm font-semibold flex items-center gap-2 hover:border-amber-500">
+                    <i data-lucide="scan-line" class="w-4 h-4 text-amber-500"></i> Login Google
+                  </button>
+                ` : `
+                  <button onclick="navigateTo('transactions')" class="px-4 py-2.5 rounded-xl glass-card text-xs sm:text-sm font-semibold flex items-center gap-2 hover:border-blue-500">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-blue-600"></i> Cek Status Pesanan
+                  </button>
+                `}
+              </div>
+            </div>
+
+            <!-- Quick Marketplace Metrics -->
+            <div class="grid grid-cols-3 lg:grid-cols-1 gap-2.5 sm:gap-3 shrink-0 lg:w-56">
+              <div class="glass-card rounded-2xl p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <p class="font-display font-extrabold text-base sm:text-lg leading-none">${state.products.filter(p => p.status === 'AVAILABLE').length}</p>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Barang Ready</p>
+                </div>
+              </div>
+              <div class="glass-card rounded-2xl p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <p class="font-display font-extrabold text-base sm:text-lg leading-none">${state.users.filter(u => u.role === 'student').length}</p>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Mahasiswa UB</p>
+                </div>
+              </div>
+              <div class="glass-card rounded-2xl p-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="handshake" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <p class="font-display font-extrabold text-base sm:text-lg leading-none">0%</p>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Biaya Admin</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Category Horizontal Pills -->
+        <section class="mb-5">
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            ${categories.map(cat => {
+              const active = state.filters.category === cat.name;
+              return `
+                <button
+                  onclick="setCategoryFilter('${cat.name}')"
+                  class="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+                    active
+                      ? 'bg-ub-navy dark:bg-blue-600 text-white shadow-md'
+                      : 'glass-card text-slate-700 dark:text-slate-200 hover:border-blue-400'
+                  }"
+                >
+                  <i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i>
+                  <span>${cat.name}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </section>
+
+        <!-- Multi-Criteria Filter Bar (Price, Condition, COD Location, Sort) -->
+        <section class="glass-panel rounded-2xl p-4 mb-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Kondisi Barang</label>
+              <select onchange="updateFilter('condition', this.value)" class="w-full px-3 py-2 rounded-xl glass-input">
+                <option value="Semua" ${state.filters.condition === 'Semua' ? 'selected' : ''}>Semua Kondisi</option>
+                <option value="Baru" ${state.filters.condition === 'Baru' ? 'selected' : ''}>Baru</option>
+                <option value="Preloved - Like New" ${state.filters.condition === 'Preloved - Like New' ? 'selected' : ''}>Preloved - Like New</option>
+                <option value="Preloved - Good" ${state.filters.condition === 'Preloved - Good' ? 'selected' : ''}>Preloved - Good</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Lokasi COD Kampus</label>
+              <select onchange="updateFilter('cod', this.value)" class="w-full px-3 py-2 rounded-xl glass-input">
+                ${codLocations.map(loc => `<option value="${loc}" ${state.filters.cod === loc ? 'selected' : ''}>${loc}</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Rentang Harga</label>
+              <select onchange="updateFilter('priceRange', this.value)" class="w-full px-3 py-2 rounded-xl glass-input">
+                <option value="Semua Harga" ${state.filters.priceRange === 'Semua Harga' ? 'selected' : ''}>Semua Harga</option>
+                <option value="< 50rb" ${state.filters.priceRange === '< 50rb' ? 'selected' : ''}>Di bawah Rp 50.000</option>
+                <option value="50rb - 150rb" ${state.filters.priceRange === '50rb - 150rb' ? 'selected' : ''}>Rp 50.000 - Rp 150.000</option>
+                <option value="> 150rb" ${state.filters.priceRange === '> 150rb' ? 'selected' : ''}>Di atas Rp 150.000</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">Urutkan</label>
+              <select onchange="updateFilter('sortBy', this.value)" class="w-full px-3 py-2 rounded-xl glass-input">
+                <option value="newest" ${state.filters.sortBy === 'newest' ? 'selected' : ''}>Terbaru Diposting</option>
+                <option value="price-asc" ${state.filters.sortBy === 'price-asc' ? 'selected' : ''}>Harga Terendah</option>
+                <option value="price-desc" ${state.filters.sortBy === 'price-desc' ? 'selected' : ''}>Harga Tertinggi</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col justify-end">
+              <button onclick="resetAllFilters()" class="w-full py-2 px-3 rounded-xl glass-card hover:border-rose-400 text-slate-600 dark:text-slate-300 font-semibold flex items-center justify-center gap-1.5">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Filter
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recommended Products Section (Shown on default view) -->
+        ${isDefaultBrowsing && recommendedProducts.length > 0 ? `
+          <section class="mb-8">
+            <div class="flex items-center justify-between mb-3.5">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </span>
+                <div>
+                  <h2 class="font-display font-bold text-base sm:text-lg">Rekomendasi Kebutuhan Kuliah</h2>
+                  <p class="text-[11px] text-slate-500 dark:text-slate-400">Pilihan populer minggu ini di sekitar Universitas Brawijaya</p>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              ${recommendedProducts.map(p => renderProductCard(p, true)).join('')}
+            </div>
+          </section>
+        ` : ''}
+
+        <!-- Main Product Catalog -->
+        <section class="mb-10">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="font-display font-bold text-base sm:text-lg">
+                ${isDefaultBrowsing ? 'Produk Terbaru Mahasiswa UB' : `Hasil Pencarian (${filteredProducts.length} Barang)`}
+              </h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Barang berstatus SOLD otomatis disembunyikan dari daftar tersedia</p>
+            </div>
+            <label class="inline-flex items-center gap-2 text-xs cursor-pointer select-none glass-card px-3 py-1.5 rounded-xl">
+              <input type="checkbox" ${state.filters.showReserved ? 'checked' : ''} onchange="updateFilter('showReserved', this.checked)" class="rounded text-blue-600 focus:ring-0" />
+              <span>Tampilkan barang <span class="font-semibold text-amber-600 dark:text-amber-400">RESERVED</span></span>
+            </label>
+          </div>
+
+          ${filteredProducts.length === 0 ? `
+            <div class="glass-panel rounded-3xl p-10 text-center">
+              <div class="w-14 h-14 rounded-2xl bg-slate-200/70 dark:bg-slate-800 mx-auto flex items-center justify-center text-slate-400 mb-3">
+                <i data-lucide="search-x" class="w-7 h-7"></i>
+              </div>
+              <h3 class="font-display font-bold text-base">Barang Tidak Ditemukan</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mt-1">Coba ubah kata kunci pencarian atau reset filter kategori, lokasi COD, dan harga.</p>
+              <button onclick="resetAllFilters()" class="mt-4 px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold">Reset Pencarian</button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              ${filteredProducts.map(p => renderProductCard(p, false)).join('')}
+            </div>
+          `}
+        </section>
+      `;
+    }
+
+    function renderProductCard(product, isFeaturedBadge = false) {
+      const seller = getUserById(product.sellerId);
+      const isWishlisted = state.currentUser?.wishlist?.includes(product.id);
+      const isReserved = product.status === 'RESERVED';
+
+      return `
+        <article class="glass-card rounded-2xl overflow-hidden flex flex-col group">
+          <!-- Image & Status Overlays -->
+          <div class="relative aspect-[16/11] bg-slate-200 dark:bg-slate-800 overflow-hidden cursor-pointer" onclick="openProductDetail('${product.id}')">
+            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            
+            <!-- Status Pill -->
+            <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+              ${isReserved ? `
+                <span class="px-2.5 py-1 rounded-lg bg-amber-500 text-white text-[10px] font-extrabold tracking-wider shadow-md flex items-center gap-1">
+                  <i data-lucide="clock" class="w-3 h-3"></i> RESERVED
+                </span>
+              ` : `
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-500/95 text-white text-[10px] font-extrabold tracking-wider shadow-md">
+                  AVAILABLE
+                </span>
+              `}
+              ${isFeaturedBadge ? `
+                <span class="px-2 py-1 rounded-lg bg-ub-navy/90 text-amber-300 text-[10px] font-bold">Pilihan</span>
+              ` : ''}
+            </div>
+
+            <!-- Wishlist Heart Button -->
+            <button
+              onclick="event.stopPropagation(); toggleWishlist('${product.id}')"
+              title="Simpan ke Wishlist"
+              class="absolute top-2.5 right-2.5 w-8 h-8 rounded-xl bg-white/85 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-center shadow-sm hover:scale-110 transition-transform ${isWishlisted ? 'text-rose-500' : 'text-slate-500 dark:text-slate-300'}"
+            >
+              <i data-lucide="heart" class="w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}"></i>
+            </button>
+
+            <!-- Condition Tag -->
+            <span class="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded-md bg-slate-900/70 backdrop-blur-md text-white text-[10px] font-medium">
+              ${product.condition}
+            </span>
+          </div>
+
+          <!-- Card Body -->
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div class="cursor-pointer" onclick="openProductDetail('${product.id}')">
+              <p class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">${product.category}</p>
+              <h3 class="font-display font-bold text-sm mt-0.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${product.name}</h3>
+              <p class="font-display font-extrabold text-base text-slate-900 dark:text-white mt-2">${formatRupiah(product.price)}</p>
+            </div>
+
+            <div class="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60 space-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+              <div class="flex items-center gap-1.5 truncate">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-500 shrink-0"></i>
+                <span class="truncate">${product.cod}</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1.5 truncate">
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-500 shrink-0"></i>
+                  <span class="truncate font-medium text-slate-700 dark:text-slate-300">${seller.name.split(' ')[0]} • ${seller.fakultas}</span>
+                </div>
+                <button onclick="openProductDetail('${product.id}')" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline shrink-0">Detail →</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // =========================================================================
+    // 9. PRODUCT DETAIL, ORDER SUBMISSION & WISHLIST ACTIONS
+    // =========================================================================
+    function openProductDetail(productId) {
+      const product = getProductById(productId);
+      if (!product) return;
+
+      const seller = getUserById(product.sellerId);
+      const isOwner = state.currentUser?.id === product.sellerId;
+      const isWishlisted = state.currentUser?.wishlist?.includes(product.id);
+      const existingOrder = state.orders.find(
+        o => o.productId === product.id && o.status !== 'DIBATALKAN'
+      );
+
+      const container = document.getElementById('product-detail-content');
+      container.innerHTML = `
+        <button onclick="closeModal('product-detail-modal')" class="absolute top-4 right-4 z-20 p-2 rounded-xl bg-white/85 dark:bg-slate-900/85 backdrop-blur-md text-slate-600 dark:text-slate-200 shadow-md hover:scale-105">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <div class="grid grid-cols-1 md:grid-cols-2">
+          <!-- Left: Product Visual -->
+          <div class="relative bg-slate-200 dark:bg-slate-800 min-h-[260px] md:min-h-[420px]">
+            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" />
+            <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+              <span class="px-3 py-1 rounded-xl text-xs font-extrabold tracking-wide text-white shadow-md ${
+                product.status === 'AVAILABLE' ? 'bg-emerald-500' : product.status === 'RESERVED' ? 'bg-amber-500' : 'bg-slate-600'
+              }">
+                STATUS: ${product.status}
+              </span>
+            </div>
+          </div>
+
+          <!-- Right: Product Info & Actions -->
+          <div class="p-6 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 font-semibold">
+                <span>${product.category}</span>
+                <span>•</span>
+                <span>${product.condition}</span>
+              </div>
+
+              <h2 class="font-display font-extrabold text-xl sm:text-2xl mt-1.5 leading-snug">${product.name}</h2>
+              <p class="font-display font-extrabold text-2xl text-blue-600 dark:text-blue-400 mt-2">${formatRupiah(product.price)}</p>
+
+              <!-- COD & Seller Info Box -->
+              <div class="mt-4 p-3.5 rounded-2xl bg-slate-100/80 dark:bg-slate-800/70 space-y-2.5 text-xs">
+                <div class="flex items-center gap-2.5">
+                  <i data-lucide="map-pin" class="w-4 h-4 text-amber-500 shrink-0"></i>
+                  <div>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">Lokasi COD Disarankan</p>
+                    <p class="font-bold">${product.cod}</p>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-slate-200/70 dark:border-slate-700/70">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-ub-navy text-white font-bold flex items-center justify-center text-xs">
+                      ${seller.name[0]}
+                    </div>
+                    <div>
+                      <p class="font-bold flex items-center gap-1">
+                        ${seller.name}
+                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                      </p>
+                      <p class="text-[10px] text-slate-500 dark:text-slate-400">Mahasiswa ${seller.fakultas} • Angkatan ${seller.angkatan}</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">Google Verified</span>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="mt-4">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Deskripsi Barang</h4>
+                <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">${product.description}</p>
+              </div>
+
+              <!-- Privacy WhatsApp Info -->
+              <div class="mt-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-[11px] text-amber-700 dark:text-amber-300 flex items-start gap-2">
+                <i data-lucide="shield" class="w-4 h-4 shrink-0 mt-0.5"></i>
+                <span>Komunikasi awal dilakukan melalui chat internal Tukuin. Nomor WhatsApp penjual otomatis terbuka setelah kesepakatan <strong>Fix Deal</strong>.</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-6 pt-4 border-t border-slate-200/70 dark:border-slate-700/70 space-y-2.5">
+              ${isOwner ? `
+                <div class="flex gap-2">
+                  <button onclick="closeModal('product-detail-modal'); openSellModal('${product.id}')" class="flex-1 py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center justify-center gap-1.5">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i> Edit Produk Saya
+                  </button>
+                  <button onclick="closeModal('product-detail-modal'); navigateTo('transactions', 'my-products')" class="flex-1 py-2.5 px-4 rounded-xl glass-card text-xs font-bold">
+                    Kelola di Lapak
+                  </button>
+                </div>
+              ` : product.status === 'AVAILABLE' ? `
+                <div class="flex flex-col sm:flex-row gap-2">
+                  <button onclick="handleProtectedAction(() => submitOrderRequest('${product.id}'))" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Ajukan Pesanan
+                  </button>
+                  <button onclick="handleProtectedAction(() => toggleWishlist('${product.id}', true))" class="py-3 px-4 rounded-xl glass-card text-xs font-bold flex items-center justify-center gap-1.5 ${isWishlisted ? 'text-rose-500 border-rose-400' : ''}">
+                    <i data-lucide="heart" class="w-4 h-4 ${isWishlisted ? 'fill-rose-500' : ''}"></i>
+                    <span>${isWishlisted ? 'Tersimpan' : 'Wishlist'}</span>
+                  </button>
+                </div>
+              ` : product.status === 'RESERVED' ? `
+                <div class="space-y-2">
+                  <div class="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-700 dark:text-amber-300 font-medium text-center">
+                    Barang ini sedang berstatus <strong>RESERVED</strong> (dalam proses negosiasi/pesanan).
+                  </div>
+                  ${existingOrder && state.currentUser && (existingOrder.buyerId === state.currentUser.id || existingOrder.sellerId === state.currentUser.id) ? `
+                    <button onclick="closeModal('product-detail-modal'); openOrderChatModal('${existingOrder.id}')" class="w-full py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center justify-center gap-2">
+                      <i data-lucide="message-circle" class="w-4 h-4"></i> Buka Ruang Chat & Status Pesanan
+                    </button>
+                  ` : ''}
+                </div>
+              ` : `
+                <div class="p-3 rounded-xl bg-slate-500/15 text-xs font-bold text-center text-slate-500">
+                  Barang Sudah Terjual (SOLD)
+                </div>
+              `}
+
+              ${!isOwner ? `
+                <div class="flex justify-end">
+                  <button onclick="handleProtectedAction(() => openReportModal('product', '${product.id}'))" class="text-[11px] text-slate-400 hover:text-rose-500 flex items-center gap-1">
+                    <i data-lucide="flag" class="w-3 h-3"></i> Laporkan Produk Ini
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+
+      openModal('product-detail-modal');
+    }
+
+    function toggleWishlist(productId, refreshDetailModal = false) {
+      if (!state.currentUser) {
+        handleProtectedAction(() => toggleWishlist(productId, refreshDetailModal));
+        return;
+      }
+      const list = state.currentUser.wishlist || [];
+      const idx = list.indexOf(productId);
+      if (idx > -1) {
+        list.splice(idx, 1);
+        showToast('Dihapus dari Wishlist', 'Barang dihapus dari daftar favorit Anda.', 'info');
+      } else {
+        list.push(productId);
+        showToast('Disimpan ke Wishlist', 'Barang ditambahkan ke daftar favorit Anda.', 'success');
+      }
+      state.currentUser.wishlist = list;
+      updateHeaderBadges();
+      renderCurrentView();
+      if (refreshDetailModal) {
+        openProductDetail(productId);
+      }
+    }
+
+    // Submit Order -> Product status automatically changes from AVAILABLE to RESERVED
+    function submitOrderRequest(productId) {
+      const product = getProductById(productId);
+      if (!product || product.status !== 'AVAILABLE') {
+        showToast('Barang Tidak Tersedia', 'Maaf, barang ini sudah dipesan atau terjual.', 'error');
+        return;
+      }
+
+      if (product.sellerId === state.currentUser.id) {
+        showToast('Tidak Dapat Memesan', 'Anda tidak dapat memesan barang milik Anda sendiri.', 'warning');
+        return;
+      }
+
+      // Automatic status change: AVAILABLE -> RESERVED
+      product.status = 'RESERVED';
+
+      const nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      const newOrder = {
+        id: 'ord-' + Date.now(),
+        productId: product.id,
+        buyerId: state.currentUser.id,
+        sellerId: product.sellerId,
+        status: 'MENUNGGU_KONFIRMASI',
+        buyerFixDeal: false,
+        sellerFixDeal: false,
+        note: `Halo, saya tertarik membeli "${product.name}". Kapan bisa COD di ${product.cod}?`,
+        cancelReason: '',
+        createdAt: Date.now(),
+        messages: [
+          {
+            senderId: state.currentUser.id,
+            text: `Halo kak! Saya baru mengajukan pesanan untuk "${product.name}". Kapan kira-kira bisa ketemuan COD di ${product.cod}?`,
+            time: nowTime
+          }
+        ]
+      };
+
+      state.orders.unshift(newOrder);
+
+      pushNotification(
+        product.sellerId,
+        'Pesanan Baru Masuk!',
+        `${state.currentUser.name} mengajukan pesanan untuk "${product.name}". Status otomatis RESERVED.`
+      );
+      pushNotification(
+        state.currentUser.id,
+        'Pesanan Berhasil Diajukan',
+        `Pesanan "${product.name}" tercatat. Silakan diskusikan jadwal COD dan klik Fix Deal.`
+      );
+
+      closeModal('product-detail-modal');
+      showToast('Pesanan Diajukan!', 'Status barang otomatis menjadi RESERVED. Silakan lanjutkan koordinasi COD.', 'success');
+      navigateTo('transactions', 'purchases');
+      openOrderChatModal(newOrder.id);
+    }
+
+    // =========================================================================
+    // 10. SELL / EDIT / DELETE PRODUCT (FITUR JUAL BARANG)
+    // =========================================================================
+    let uploadedProductDataUrl = '';
+
+    function openSellModal(editProductId = null) {
+      const form = document.getElementById('sell-product-form');
+      form.reset();
+      document.getElementById('sell-product-id').value = '';
+      document.getElementById('sell-wa').value = state.currentUser?.wa || '';
+
+      if (editProductId) {
+        const p = getProductById(editProductId);
+        if (!p) return;
+        document.getElementById('sell-modal-title').textContent = 'Edit Data Barang';
+        document.getElementById('sell-product-id').value = p.id;
+        document.getElementById('sell-name').value = p.name;
+        document.getElementById('sell-category').value = p.category;
+        document.getElementById('sell-condition').value = p.condition;
+        document.getElementById('sell-price').value = p.price;
+        document.getElementById('sell-cod').value = p.cod;
+        document.getElementById('sell-wa').value = p.wa || state.currentUser?.wa || '';
+        document.getElementById('sell-desc').value = p.description;
+        uploadedProductDataUrl = p.image;
+        document.getElementById('sell-photo-preview').src = p.image;
+      } else {
+        document.getElementById('sell-modal-title').textContent = 'Pasang Iklan Barang Baru';
+        uploadedProductDataUrl = SAMPLE_ARTWORKS[sampleImageIndex % SAMPLE_ARTWORKS.length];
+        document.getElementById('sell-photo-preview').src = uploadedProductDataUrl;
+      }
+
+      openModal('sell-modal');
+    }
+
+    function handleProductImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Ukuran Foto Terlalu Besar', 'Maksimal ukuran foto produk adalah 5MB.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedProductDataUrl = e.target.result;
+        document.getElementById('sell-photo-preview').src = uploadedProductDataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function cycleSampleProductImage() {
+      sampleImageIndex = (sampleImageIndex + 1) % SAMPLE_ARTWORKS.length;
+      uploadedProductDataUrl = SAMPLE_ARTWORKS[sampleImageIndex];
+      document.getElementById('sell-photo-preview').src = uploadedProductDataUrl;
+    }
+
+    function handleSaveProduct(event) {
+      event.preventDefault();
+      const editId = document.getElementById('sell-product-id').value;
+      const name = document.getElementById('sell-name').value.trim();
+      const category = document.getElementById('sell-category').value;
+      const condition = document.getElementById('sell-condition').value;
+      const price = parseInt(document.getElementById('sell-price').value, 10);
+      const cod = document.getElementById('sell-cod').value;
+      const wa = document.getElementById('sell-wa').value.trim();
+      const description = document.getElementById('sell-desc').value.trim();
+
+      if (!name || isNaN(price) || price < 1000) {
+        showToast('Validasi Gagal', 'Pastikan nama barang dan harga minimal Rp 1.000 terisi benar.', 'error');
+        return;
+      }
+
+      if (editId) {
+        const product = getProductById(editId);
+        if (product) {
+          product.name = name;
+          product.category = category;
+          product.condition = condition;
+          product.price = price;
+          product.cod = cod;
+          product.wa = wa;
+          product.description = description;
+          product.image = uploadedProductDataUrl || product.image;
+          showToast('Produk Diperbarui', `"${name}" berhasil disimpan.`, 'success');
+        }
+      } else {
+        const newProduct = {
+          id: 'p-' + Date.now(),
+          sellerId: state.currentUser.id,
+          name,
+          category,
+          condition,
+          price,
+          cod,
+          wa,
+          description,
+          image: uploadedProductDataUrl || SAMPLE_ARTWORKS[0],
+          status: 'AVAILABLE',
+          featured: false,
+          createdAt: Date.now()
+        };
+        state.products.unshift(newProduct);
+        showToast('Barang Tayang!', `"${name}" kini tersedia di katalog mahasiswa UB.`, 'success');
+      }
+
+      closeModal('sell-modal');
+      renderCurrentView();
+    }
+
+    function confirmDeleteProduct(productId) {
+      const product = getProductById(productId);
+      if (!product) return;
+
+      const modal = document.getElementById('action-modal-content');
+      modal.innerHTML = `
+        <div class="flex items-center gap-3 text-rose-600 dark:text-rose-400 mb-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-500/15 flex items-center justify-center">
+            <i data-lucide="trash-2" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg">Hapus Produk?</h3>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-5">
+          Anda yakin ingin menghapus <strong>"${product.name}"</strong> dari katalog Tukuin? Tindakan ini tidak dapat dibatalkan.
+        </p>
+        <div class="flex justify-end gap-2.5">
+          <button onclick="closeModal('action-modal')" class="px-4 py-2 rounded-xl glass-card text-xs font-semibold">Batal</button>
+          <button onclick="executeDeleteProduct('${product.id}')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">Ya, Hapus Produk</button>
+        </div>
+      `;
+      openModal('action-modal');
+    }
+
+    function executeDeleteProduct(productId) {
+      state.products = state.products.filter(p => p.id !== productId);
+      closeModal('action-modal');
+      showToast('Produk Dihapus', 'Produk telah dihapus dari daftar.', 'info');
+      renderCurrentView();
+    }
+
+    // =========================================================================
+    // 11. IN-APP CHAT, FIX DEAL WHATSAPP UNLOCK & ORDER STATUS WORKFLOW
+    // =========================================================================
+    function openOrderChatModal(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const product = getProductById(order.productId);
+      const buyer = getUserById(order.buyerId);
+      const seller = getUserById(order.sellerId);
+      const isBuyer = state.currentUser?.id === order.buyerId;
+      const isSeller = state.currentUser?.id === order.sellerId;
+      const partner = isBuyer ? seller : buyer;
+
+      const isFixDeal = order.status === 'FIX_DEAL' || order.status === 'SELESAI';
+
+      const container = document.getElementById('chat-modal-content');
+      container.innerHTML = `
+        <!-- Header -->
+        <div class="p-4 sm:p-5 border-b border-slate-200/70 dark:border-slate-700/70 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <img src="${product?.image || SAMPLE_ARTWORKS[0]}" class="w-11 h-11 rounded-xl object-cover shrink-0" />
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                  order.status === 'FIX_DEAL'
+                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                    : order.status === 'SELESAI'
+                    ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400'
+                    : order.status === 'DIBATALKAN'
+                    ? 'bg-rose-500/15 text-rose-600'
+                    : 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                }">${order.status.replace('_', ' ')}</span>
+                <span class="text-xs font-bold truncate">${partner.name} (${partner.fakultas})</span>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">${product?.name || 'Produk'} • <strong class="text-slate-800 dark:text-slate-200">${formatRupiah(product?.price || 0)}</strong></p>
+            </div>
+          </div>
+          <button onclick="closeModal('chat-modal')" class="p-2 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500 shrink-0">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Fix Deal & Contact Unlock Banner -->
+        <div class="px-4 py-3 bg-slate-100/80 dark:bg-slate-800/70 border-b border-slate-200/60 dark:border-slate-700/60 text-xs">
+          ${isFixDeal ? `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-200">
+              <div class="flex items-center gap-2">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
+                <div>
+                  <p class="font-bold">Fix Deal Tercapai! Kontak WhatsApp Terbuka:</p>
+                  <p class="font-mono font-bold text-sm mt-0.5">${isBuyer ? (order.sellerWa || '-') : (order.buyerWa || '-')} (${partner.name})</p>
+                </div>
+              </div>
+              <span class="text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-emerald-600 text-white self-start sm:self-center">Siap COD: ${product?.cod}</span>
+            </div>
+          ` : order.status === 'DIBATALKAN' ? `
+            <p class="text-rose-600 font-semibold text-center">Pesanan ini telah dibatalkan. (${order.cancelReason || 'Dibatalkan pengguna'})</p>
+          ` : `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <p class="font-semibold text-slate-700 dark:text-slate-200">Sepakati jadwal & lokasi COD di chat ini.</p>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                  Status Fix Deal: Pembeli ${order.buyerFixDeal ? '✅' : '⏳'} • Penjual ${order.sellerFixDeal ? '✅' : '⏳'}
+                </p>
+              </div>
+              ${(isBuyer && !order.buyerFixDeal) || (isSeller && !order.sellerFixDeal) ? `
+                <button onclick="confirmFixDeal('${order.id}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 shrink-0">
+                  <i data-lucide="handshake" class="w-4 h-4"></i> Klik Fix Deal
+                </button>
+              ` : `
+                <span class="px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 font-semibold text-[11px]">Menunggu konfirmasi lawan transaksi...</span>
+              `}
+            </div>
+          `}
+        </div>
+
+        <!-- Messages Stream -->
+        <div id="chat-messages-box" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-[220px]">
+          ${order.messages.map(m => {
+            const isMe = m.senderId === state.currentUser?.id;
+            return `
+              <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                <div class="max-w-[80%] px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed ${
+                  isMe
+                    ? 'bg-blue-600 text-white rounded-br-sm'
+                    : 'glass-card text-slate-800 dark:text-slate-100 rounded-bl-sm'
+                }">
+                  <p>${m.text}</p>
+                </div>
+                <span class="text-[10px] text-slate-400 mt-1 px-1">${m.time}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Message Input -->
+        ${order.status !== 'DIBATALKAN' && order.status !== 'SELESAI' ? `
+          <form onsubmit="sendOrderChatMessage(event, '${order.id}')" class="p-3.5 border-t border-slate-200/70 dark:border-slate-700/70 flex gap-2">
+            <input id="chat-message-input" type="text" required placeholder="Tulis pesan negosiasi atau titik ketemuan COD..." class="flex-1 px-3.5 py-2.5 rounded-xl glass-input text-xs" />
+            <button type="submit" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5">
+              <span>Kirim</span>
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+        ` : ''}
+      `;
+
+      openModal('chat-modal');
+      const box = document.getElementById('chat-messages-box');
+      if (box) box.scrollTop = box.scrollHeight;
+    }
+
+    function sendOrderChatMessage(event, orderId) {
+      event.preventDefault();
+      const input = document.getElementById('chat-message-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const nowTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      order.messages.push({
+        senderId: state.currentUser.id,
+        text,
+        time: nowTime
+      });
+
+      const partnerId = state.currentUser.id === order.buyerId ? order.sellerId : order.buyerId;
+      pushNotification(partnerId, 'Pesan Baru dari ' + state.currentUser.name, text);
+
+      openOrderChatModal(orderId);
+    }
+
+    function confirmFixDeal(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      if (state.currentUser.id === order.buyerId) order.buyerFixDeal = true;
+      if (state.currentUser.id === order.sellerId) order.sellerFixDeal = true;
+
+      // Once either/both confirm Fix Deal (if seller accepts or both agree, let's unlock immediately when both agree, or if seller clicks Fix Deal after buyer requested!)
+      if (order.buyerFixDeal && order.sellerFixDeal) {
+        order.status = 'FIX_DEAL';
+        const product = getProductById(order.productId);
+        pushNotification(order.buyerId, 'Fix Deal Tercapai!', `Kontak WhatsApp penjual untuk "${product?.name}" kini terbuka.`);
+        pushNotification(order.sellerId, 'Fix Deal Tercapai!', `Kontak WhatsApp pembeli untuk "${product?.name}" kini terbuka.`);
+        showToast('Fix Deal Berhasil!', 'Nomor WhatsApp kini ditampilkan di ruang transaksi untuk koordinasi COD.', 'success');
+      } else {
+        const partnerId = state.currentUser.id === order.buyerId ? order.sellerId : order.buyerId;
+        pushNotification(partnerId, 'Konfirmasi Fix Deal', `${state.currentUser.name} telah menekan Fix Deal. Klik Fix Deal untuk membuka kontak WhatsApp.`);
+        showToast('Fix Deal Dicatat', 'Menunggu pihak lawan menekan tombol Fix Deal.', 'info');
+      }
+
+      openOrderChatModal(orderId);
+      renderCurrentView();
+    }
+
+    // Seller confirms transaction is completed -> Product status automatically changes to SOLD
+    function confirmOrderCompleted(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const modal = document.getElementById('action-modal-content');
+      modal.innerHTML = `
+        <div class="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 mb-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/15 flex items-center justify-center">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg">Konfirmasi Transaksi Selesai?</h3>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-5">
+          Pastikan barang sudah diserahkan saat COD dan pembayaran diterima. Status produk akan otomatis berubah menjadi <strong>SOLD</strong> dan tidak lagi tampil di daftar produk tersedia.
+        </p>
+        <div class="flex justify-end gap-2.5">
+          <button onclick="closeModal('action-modal')" class="px-4 py-2 rounded-xl glass-card text-xs font-semibold">Belum</button>
+          <button onclick="executeCompleteOrder('${order.id}')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">Ya, Transaksi Selesai</button>
+        </div>
+      `;
+      openModal('action-modal');
+    }
+
+    function executeCompleteOrder(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      order.status = 'SELESAI';
+      const product = getProductById(order.productId);
+      if (product) {
+        // Automatic status transition: RESERVED -> SOLD
+        product.status = 'SOLD';
+      }
+
+      pushNotification(
+        order.buyerId,
+        'Transaksi Selesai!',
+        `Penjual telah mengonfirmasi penyelesaian pesanan "${product?.name}". Terima kasih telah bertransaksi di Tukuin!`
+      );
+
+      closeModal('action-modal');
+      showToast('Transaksi Selesai!', 'Status produk otomatis menjadi SOLD dan disembunyikan dari katalog publik.', 'success');
+      renderCurrentView();
+    }
+
+    // Cancel Order -> Product status automatically reverts from RESERVED back to AVAILABLE
+    function openCancelOrderModal(orderId) {
+      const modal = document.getElementById('action-modal-content');
+      modal.innerHTML = `
+        <div class="flex items-center gap-3 text-rose-600 dark:text-rose-400 mb-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-500/15 flex items-center justify-center">
+            <i data-lucide="x-circle" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg">Batalkan Pesanan</h3>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+          Sesuai ketentuan Tukuin UB, pembatalan pesanan akan mengembalikan status produk menjadi <strong>AVAILABLE</strong> agar dapat dipesan mahasiswa lain.
+        </p>
+        <form onsubmit="executeCancelOrder(event, '${orderId}')" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-semibold mb-1">Alasan Pembatalan *</label>
+            <select id="cancel-reason-select" class="w-full px-3 py-2.5 rounded-xl glass-input">
+              <option value="Jadwal COD tidak cocok">Jadwal COD tidak cocok</option>
+              <option value="Lokasi COD terlalu jauh">Lokasi COD terlalu jauh</option>
+              <option value="Berubah pikiran / sudah dapat barang lain">Berubah pikiran / sudah dapat barang lain</option>
+              <option value="Kesepakatan bersama penjual & pembeli">Kesepakatan bersama penjual & pembeli</option>
+            </select>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="closeModal('action-modal')" class="px-4 py-2 rounded-xl glass-card font-semibold">Kembali</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold">Konfirmasi Batalkan</button>
+          </div>
+        </form>
+      `;
+      openModal('action-modal');
+    }
+
+    function executeCancelOrder(event, orderId) {
+      event.preventDefault();
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const reason = document.getElementById('cancel-reason-select').value;
+      order.status = 'DIBATALKAN';
+      order.cancelReason = reason;
+
+      const product = getProductById(order.productId);
+      if (product && product.status === 'RESERVED') {
+        // Automatic revert: RESERVED -> AVAILABLE
+        product.status = 'AVAILABLE';
+      }
+
+      const partnerId = state.currentUser.id === order.buyerId ? order.sellerId : order.buyerId;
+      pushNotification(
+        partnerId,
+        'Pesanan Dibatalkan',
+        `Pesanan untuk "${product?.name}" dibatalkan (${reason}). Status produk kembali AVAILABLE.`
+      );
+
+      closeModal('action-modal');
+      showToast('Pesanan Dibatalkan', 'Status produk otomatis dikembalikan menjadi AVAILABLE.', 'warning');
+      renderCurrentView();
+    }
+
+    // =========================================================================
+    // 12. VIEW B: TRANSAKSI SAYA (RIWAYAT PEMBELIAN, PENJUALAN & KELOLA LAPAK)
+    // =========================================================================
+    function setTransactionTab(tab) {
+      state.transactionTab = tab;
+      renderCurrentView();
+    }
+
+    function renderTransactionsView() {
+      const uid = state.currentUser.id;
+      const myPurchases = state.orders.filter(o => o.buyerId === uid);
+      const mySales = state.orders.filter(o => o.sellerId === uid);
+      const myProducts = state.products.filter(p => p.sellerId === uid);
+
+      return `
+        <div class="mb-6">
+          <h1 class="font-display font-extrabold text-2xl">Transaksi & Lapak Mahasiswa</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Kelola riwayat pembelian, pesanan masuk, status Fix Deal, dan daftar barang jualan Anda</p>
+        </div>
+
+        <!-- Sub-navigation Tabs -->
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button onclick="setTransactionTab('purchases')" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all ${
+            state.transactionTab === 'purchases' ? 'bg-blue-600 text-white shadow-md' : 'glass-card'
+          }">
+            <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+            <span>Riwayat Pembelian (${myPurchases.length})</span>
+          </button>
+
+          <button onclick="setTransactionTab('sales')" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all ${
+            state.transactionTab === 'sales' ? 'bg-blue-600 text-white shadow-md' : 'glass-card'
+          }">
+            <i data-lucide="inbox" class="w-4 h-4"></i>
+            <span>Riwayat Penjualan & Pesanan Masuk (${mySales.length})</span>
+          </button>
+
+          <button onclick="setTransactionTab('my-products')" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all ${
+            state.transactionTab === 'my-products' ? 'bg-blue-600 text-white shadow-md' : 'glass-card'
+          }">
+            <i data-lucide="package" class="w-4 h-4"></i>
+            <span>Barang Jualan Saya (${myProducts.length})</span>
+          </button>
+        </div>
+
+        ${state.transactionTab === 'purchases' ? renderOrderList(myPurchases, 'buyer') : ''}
+        ${state.transactionTab === 'sales' ? renderOrderList(mySales, 'seller') : ''}
+        ${state.transactionTab === 'my-products' ? renderMyProductsList(myProducts) : ''}
+      `;
+    }
+
+    function renderOrderList(orders, role) {
+      if (orders.length === 0) {
+        return `
+          <div class="glass-panel rounded-3xl p-10 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-slate-200/70 dark:bg-slate-800 mx-auto flex items-center justify-center text-slate-400 mb-3">
+              <i data-lucide="receipt" class="w-7 h-7"></i>
+            </div>
+            <h3 class="font-display font-bold text-base">Belum Ada Riwayat ${role === 'buyer' ? 'Pembelian' : 'Penjualan'}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              ${role === 'buyer' ? 'Jelajahi katalog kebutuhan kuliah dan ajukan pesanan pertama Anda.' : 'Pasang iklan barang yang sudah tidak terpakai untuk mulai berjualan.'}
+            </p>
+            <button onclick="${role === 'buyer' ? "navigateTo('home')" : 'openSellModal()'}" class="mt-4 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold">
+              ${role === 'buyer' ? 'Jelajahi Katalog' : '+ Jual Barang Sekarang'}
+            </button>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="space-y-4">
+          ${orders.map(order => {
+            const product = getProductById(order.productId);
+            const partner = getUserById(role === 'buyer' ? order.sellerId : order.buyerId);
+            const isFixDeal = order.status === 'FIX_DEAL' || order.status === 'SELESAI';
+            const canCancel = order.status === 'MENUNGGU_KONFIRMASI' || order.status === 'FIX_DEAL';
+
+            return `
+              <div class="glass-panel rounded-2xl p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-start gap-4">
+                  <img src="${product?.image || SAMPLE_ARTWORKS[0]}" class="w-20 h-20 rounded-2xl object-cover shrink-0 bg-slate-200 dark:bg-slate-800" />
+                  <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider ${
+                        order.status === 'FIX_DEAL'
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                          : order.status === 'SELESAI'
+                          ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400'
+                          : order.status === 'DIBATALKAN'
+                          ? 'bg-rose-500/15 text-rose-600'
+                          : 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+                      }">
+                        ${order.status.replace('_', ' ')}
+                      </span>
+                      <span class="text-[11px] text-slate-400">ID: ${order.id}</span>
+                    </div>
+
+                    <h3 class="font-display font-bold text-sm sm:text-base">${product?.name || 'Produk Dihapus'}</h3>
+                    <p class="font-display font-extrabold text-sm text-blue-600 dark:text-blue-400">${formatRupiah(product?.price || 0)}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                      ${role === 'buyer' ? 'Penjual' : 'Pembeli'}: <strong class="text-slate-700 dark:text-slate-200">${partner.name}</strong> (${partner.fakultas}) • COD: ${product?.cod || '-'}
+                    </p>
+
+                    ${isFixDeal ? `
+                      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold mt-1">
+                        <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+                        <span>WhatsApp ${role === 'buyer' ? 'Penjual' : 'Pembeli'}: ${role === 'buyer' ? (order.sellerWa || '-') : (order.buyerWa || '-')}</span>
+                      </div>
+                    ` : order.status !== 'DIBATALKAN' ? `
+                      <p class="text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-1">
+                        <i data-lucide="lock" class="w-3 h-3"></i> Nomor WhatsApp terbuka otomatis setelah kedua pihak klik Fix Deal
+                      </p>
+                    ` : `
+                      <p class="text-[11px] text-rose-500 mt-1">Alasan batal: ${order.cancelReason}</p>
+                    `}
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center gap-2 shrink-0">
+                  <button onclick="openOrderChatModal('${order.id}')" class="px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span>Chat & Nego (${order.messages.length})</span>
+                  </button>
+
+                  ${role === 'seller' && (order.status === 'MENUNGGU_KONFIRMASI' || order.status === 'FIX_DEAL') ? `
+                    <button onclick="confirmOrderCompleted('${order.id}')" class="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5">
+                      <i data-lucide="check-circle" class="w-4 h-4"></i> Konfirmasi Selesai
+                    </button>
+                  ` : ''}
+
+                  ${canCancel ? `
+                    <button onclick="openCancelOrderModal('${order.id}')" class="px-3.5 py-2.5 rounded-xl glass-card hover:border-rose-500 text-rose-600 dark:text-rose-400 text-xs font-bold">
+                      Batalkan
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderMyProductsList(myProducts) {
+      return `
+        <div class="flex justify-between items-center mb-4">
+          <p class="text-xs text-slate-500 dark:text-slate-400">Kelola status ketersediaan, edit harga, atau hapus barang yang Anda unggah.</p>
+          <button onclick="openSellModal()" class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-4 h-4"></i> Tambah Barang
+          </button>
+        </div>
+
+        ${myProducts.length === 0 ? `
+          <div class="glass-panel rounded-3xl p-10 text-center">
+            <h3 class="font-display font-bold text-base">Belum Ada Barang yang Dijual</h3>
+            <p class="text-xs text-slate-500 mt-1">Punya buku bekas kuliah atau barang kost yang tidak terpakai? Jual sekarang!</p>
+          </div>
+        ` : `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${myProducts.map(p => `
+              <div class="glass-panel rounded-2xl p-4 flex gap-4 items-center">
+                <img src="${p.image}" class="w-20 h-20 rounded-xl object-cover shrink-0" />
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold text-white ${
+                      p.status === 'AVAILABLE' ? 'bg-emerald-500' : p.status === 'RESERVED' ? 'bg-amber-500' : 'bg-slate-600'
+                    }">${p.status}</span>
+                    <span class="text-[11px] text-slate-400 truncate">${p.category}</span>
+                  </div>
+                  <h4 class="font-display font-bold text-sm truncate mt-1">${p.name}</h4>
+                  <p class="font-display font-extrabold text-sm text-blue-600 dark:text-blue-400">${formatRupiah(p.price)}</p>
+                  <div class="flex items-center gap-2 mt-2.5">
+                    ${p.status !== 'SOLD' ? `
+                      <button onclick="openSellModal('${p.id}')" class="px-3 py-1.5 rounded-lg glass-card text-xs font-semibold hover:border-blue-500 flex items-center gap-1">
+                        <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
+                      </button>
+                    ` : ''}
+                    <button onclick="confirmDeleteProduct('${p.id}')" class="px-3 py-1.5 rounded-lg glass-card text-xs font-semibold text-rose-600 hover:border-rose-500 flex items-center gap-1">
+                      <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      `;
+    }
+
+    // =========================================================================
+    // 13. VIEW C: WISHLIST & VIEW D: PROFIL MAHASISWA
+    // =========================================================================
+    function renderWishlistView() {
+      const wishlistIds = state.currentUser?.wishlist || [];
+      const savedProducts = state.products.filter(p => wishlistIds.includes(p.id));
+
+      return `
+        <div class="mb-6">
+          <h1 class="font-display font-extrabold text-2xl">Wishlist Barang Favorit</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Simpan barang kebutuhan kuliah incaran Anda sebelum dipesan mahasiswa lain</p>
+        </div>
+
+        ${savedProducts.length === 0 ? `
+          <div class="glass-panel rounded-3xl p-10 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-500 mx-auto flex items-center justify-center mb-3">
+              <i data-lucide="heart" class="w-7 h-7"></i>
+            </div>
+            <h3 class="font-display font-bold text-base">Wishlist Masih Kosong</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Tekan ikon hati pada produk di beranda untuk menyimpannya di sini.</p>
+            <button onclick="navigateTo('home')" class="mt-4 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold">Jelajahi Produk</button>
+          </div>
+        ` : `
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            ${savedProducts.map(p => renderProductCard(p, false)).join('')}
+          </div>
+        `}
+      `;
+    }
+
+    function renderProfileView() {
+      const u = state.currentUser;
+      const myPurchasesCount = state.orders.filter(o => o.buyerId === u.id).length;
+      const mySalesCount = state.orders.filter(o => o.sellerId === u.id && o.status === 'SELESAI').length;
+
+      return `
+        <div class="max-w-3xl mx-auto space-y-6 mb-10">
+          <!-- Digital KTM Card -->
+          <div class="rounded-3xl bg-gradient-to-br from-ub-navy via-blue-900 to-slate-900 p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-amber-400/15 blur-2xl"></div>
+            <div class="flex items-center justify-between border-b border-white/15 pb-4 mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-amber-400 text-ub-navy font-extrabold flex items-center justify-center text-sm shadow">UB</div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">Profil Akun Tukuin UB</p>
+                  <p class="font-display font-bold text-sm sm:text-base">UNIVERSITAS BRAWIJAYA</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold flex items-center gap-1">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Terverifikasi
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 items-center">
+              <div class="sm:col-span-2 space-y-3 text-xs sm:text-sm">
+                <div>
+                  <p class="text-[11px] text-blue-300">Nama Mahasiswa</p>
+                  <p class="font-display font-bold text-lg sm:text-xl">${u.name}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-[11px] text-blue-300">NIM</p>
+                    <p class="font-mono font-bold">${u.nim || '-'}</p>
+                  </div>
+                  <div>
+                    <p class="text-[11px] text-blue-300">Fakultas / Angkatan</p>
+                    <p class="font-semibold">${u.fakultas} • ${u.angkatan}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-1 gap-2.5">
+                <div class="p-3 rounded-2xl bg-white/10 backdrop-blur-md">
+                  <p class="font-display font-extrabold text-xl text-amber-300">${myPurchasesCount}</p>
+                  <p class="text-[11px] text-blue-200">Total Pembelian</p>
+                </div>
+                <div class="p-3 rounded-2xl bg-white/10 backdrop-blur-md">
+                  <p class="font-display font-extrabold text-xl text-emerald-300">${mySalesCount}</p>
+                  <p class="text-[11px] text-blue-200">Barang Terjual</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit Profile Form -->
+          <div class="glass-panel rounded-3xl p-6">
+            <h2 class="font-display font-bold text-lg mb-4">Pengaturan Profil & Kontak COD</h2>
+            <form onsubmit="handleUpdateProfile(event)" class="space-y-4 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-semibold mb-1">Nama Lengkap</label>
+                  <input id="prof-name" type="text" required value="${u.name}" class="w-full px-3.5 py-2.5 rounded-xl glass-input" />
+                </div>
+                <div>
+                  <label class="block font-semibold mb-1">Nomor WhatsApp Aktif</label>
+                  <input id="prof-wa" type="tel" required value="${u.wa || ''}" class="w-full px-3.5 py-2.5 rounded-xl glass-input" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div><label class="block font-semibold mb-1">NIM (diisi sendiri)</label><input id="prof-nim" type="text" inputmode="numeric" pattern="[0-9]{10,16}" placeholder="10-16 digit" value="${u.nim || ''}" class="w-full px-3.5 py-2.5 rounded-xl glass-input" /></div>
+                <div><label class="block font-semibold mb-1">Fakultas</label><select id="prof-fakultas" class="w-full px-3.5 py-2.5 rounded-xl glass-input">${['UB','FILKOM','FEB','FT','FISIP','FH','FK','FP','FTP','FMIPA','FIB','VOKASI'].map(f=>`<option value="${f}" ${u.fakultas===f?'selected':''}>${f}</option>`).join('')}</select></div>
+                <div><label class="block font-semibold mb-1">Angkatan</label><select id="prof-angkatan" class="w-full px-3.5 py-2.5 rounded-xl glass-input">${['-',...Array.from({length:14},(_,i)=>String(2027-i))].map(y=>`<option value="${y}" ${u.angkatan===y?'selected':''}>${y}</option>`).join('')}</select></div>
+              </div>
+              <p class="text-[11px] text-slate-500">NIM yang diketik belum diverifikasi dengan database akademik UB.</p>
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <button type="button" onclick="logoutUser()" class="px-4 py-2.5 rounded-xl glass-card text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1.5 hover:border-rose-500">
+                  <i data-lucide="log-out" class="w-4 h-4"></i> Keluar Akun
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">
+                  Simpan Perubahan Profil
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleUpdateProfile(event) {
+      event.preventDefault();
+      if (!state.currentUser) return;
+      state.currentUser.name = document.getElementById('prof-name').value.trim();
+      state.currentUser.wa = document.getElementById('prof-wa').value.trim();
+      renderChrome();
+      renderCurrentView();
+      showToast('Profil Diperbarui', 'Data profil mahasiswa Anda berhasil disimpan.', 'success');
+    }
+
+    // =========================================================================
+    // 14. VIEW E: DASHBOARD ADMIN & MODERASI LAPORAN
+    // =========================================================================
+    function setAdminTab(tab) {
+      state.adminTab = tab;
+      renderCurrentView();
+    }
+
+    function openReportModal(targetType, targetId) {
+      const modal = document.getElementById('action-modal-content');
+      modal.innerHTML = `
+        <div class="flex items-center gap-3 text-amber-600 dark:text-amber-400 mb-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/15 flex items-center justify-center">
+            <i data-lucide="flag" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-display font-bold text-lg">Laporkan ke Admin UB</h3>
+        </div>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">
+          Bantu jaga keamanan komunitas Tukuin UB dengan melaporkan iklan palsu, penipuan, atau barang terlarang.
+        </p>
+        <form onsubmit="submitReport(event, '${targetType}', '${targetId}')" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-semibold mb-1">Alasan Laporan *</label>
+            <textarea id="report-reason-text" rows="3" required placeholder="Jelaskan detail pelanggaran yang ditemukan..." class="w-full px-3.5 py-2.5 rounded-xl glass-input"></textarea>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="closeModal('action-modal')" class="px-4 py-2 rounded-xl glass-card font-semibold">Batal</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold">Kirim Laporan</button>
+          </div>
+        </form>
+      `;
+      openModal('action-modal');
+    }
+
+    function submitReport(event, targetType, targetId) {
+      event.preventDefault();
+      const reason = document.getElementById('report-reason-text').value.trim();
+      state.reports.unshift({
+        id: 'rep-' + Date.now(),
+        targetType,
+        targetId,
+        reporterId: state.currentUser.id,
+        reason,
+        status: 'pending',
+        createdAt: Date.now()
+      });
+      pushNotification('admin', 'Laporan Baru Diterima', `Laporan baru dari ${state.currentUser.name}: ${reason}`);
+      closeModal('action-modal');
+      showToast('Laporan Terkirim', 'Tim Admin Tukuin UB akan segera meninjau laporan Anda.', 'success');
+    }
+
+    function renderAdminView() {
+      const totalStudents = state.users.filter(u => u.role === 'student').length;
+      const totalProducts = state.products.length;
+      const soldProducts = state.products.filter(p => p.status === 'SOLD').length;
+      const activeOrders = state.orders.filter(o => o.status !== 'DIBATALKAN').length;
+      const pendingReports = state.reports.filter(r => r.status === 'pending').length;
+
+      return `
+        <div class="mb-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-bold mb-2">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Panel Moderator Kampus
+          </div>
+          <h1 class="font-display font-extrabold text-2xl">Dashboard Admin Tukuin UB</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pantau statistik ekosistem jual beli mahasiswa, kelola data pengguna, produk, transaksi, dan laporan</p>
+        </div>
+
+        <!-- Admin KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div class="glass-panel rounded-2xl p-4">
+            <p class="text-xs text-slate-500 dark:text-slate-400">Mahasiswa Terdaftar</p>
+            <p class="font-display font-extrabold text-2xl mt-1 text-blue-600 dark:text-blue-400">${totalStudents}</p>
+            <p class="text-[11px] text-emerald-600 mt-1">Login menggunakan Google</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4">
+            <p class="text-xs text-slate-500 dark:text-slate-400">Total Produk</p>
+            <p class="font-display font-extrabold text-2xl mt-1">${totalProducts}</p>
+            <p class="text-[11px] text-slate-500 mt-1">${soldProducts} Terjual (SOLD)</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4">
+            <p class="text-xs text-slate-500 dark:text-slate-400">Transaksi Aktif & Selesai</p>
+            <p class="font-display font-extrabold text-2xl mt-1 text-emerald-600 dark:text-emerald-400">${activeOrders}</p>
+            <p class="text-[11px] text-slate-500 mt-1">Sistem COD & Fix Deal</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4">
+            <p class="text-xs text-slate-500 dark:text-slate-400">Laporan Menunggu</p>
+            <p class="font-display font-extrabold text-2xl mt-1 text-amber-500">${pendingReports}</p>
+            <p class="text-[11px] text-slate-500 mt-1">Perlu peninjauan admin</p>
+          </div>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="flex flex-wrap gap-2 mb-5">
+          ${[
+            { id: 'products', label: 'Kelola Produk', icon: 'package' },
+            { id: 'users', label: 'Kelola Pengguna', icon: 'users' },
+            { id: 'transactions', label: 'Pantau Transaksi', icon: 'activity' },
+            { id: 'reports', label: `Laporan (${pendingReports})`, icon: 'flag' },
+            { id: 'activity', label: 'Aktivitas', icon: 'clock' }
+          ].map(t => `
+            <button onclick="setAdminTab('${t.id}')" class="px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 ${
+              state.adminTab === t.id ? 'bg-ub-navy dark:bg-blue-600 text-white shadow-md' : 'glass-card'
+            }">
+              <i data-lucide="${t.icon}" class="w-4 h-4"></i>
+              <span>${t.label}</span>
+            </button>
+          `).join('')}
+        </div>
+
+        <!-- Admin Tab Content -->
+        <div class="glass-panel rounded-3xl p-4 sm:p-6 mb-10 overflow-x-auto">
+          ${state.adminTab === 'products' ? `
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500">
+                  <th class="py-3 px-2">Produk</th>
+                  <th class="py-3 px-2">Penjual</th>
+                  <th class="py-3 px-2">Harga</th>
+                  <th class="py-3 px-2">Status</th>
+                  <th class="py-3 px-2 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+                ${state.products.map(p => {
+                  const s = getUserById(p.sellerId);
+                  return `
+                    <tr>
+                      <td class="py-3 px-2 font-semibold">${p.name}</td>
+                      <td class="py-3 px-2">${s.name} (${s.fakultas})</td>
+                      <td class="py-3 px-2 font-bold">${formatRupiah(p.price)}</td>
+                      <td class="py-3 px-2">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold text-white ${
+                          p.status === 'AVAILABLE' ? 'bg-emerald-500' : p.status === 'RESERVED' ? 'bg-amber-500' : 'bg-slate-600'
+                        }">${p.status}</span>
+                      </td>
+                      <td class="py-3 px-2 text-right">
+                        <button onclick="confirmDeleteProduct('${p.id}')" class="px-2.5 py-1.5 rounded-lg bg-rose-500/15 text-rose-600 hover:bg-rose-600 hover:text-white font-bold transition-colors">
+                          Hapus Iklan
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          ` : ''}
+
+          ${state.adminTab === 'users' ? `
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500">
+                  <th class="py-3 px-2">Mahasiswa</th>
+                  <th class="py-3 px-2">NIM</th>
+                  <th class="py-3 px-2">Fakultas</th>
+                  <th class="py-3 px-2">Status Akun</th>
+                  <th class="py-3 px-2 text-right">Moderasi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+                ${state.users.filter(u => u.role === 'student').map(u => `
+                  <tr>
+                    <td class="py-3 px-2 font-semibold">${u.name}</td>
+                    <td class="py-3 px-2 font-mono">${u.nim || '-'}</td>
+                    <td class="py-3 px-2">${u.fakultas} (${u.angkatan})</td>
+                    <td class="py-3 px-2">
+                      <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                        u.status === 'active' ? 'bg-emerald-500/15 text-emerald-600' : 'bg-rose-500/15 text-rose-600'
+                      }">${u.status === 'active' ? 'AKTIF' : 'DITANGGUHKAN'}</span>
+                    </td>
+                    <td class="py-3 px-2 text-right">
+                      <button onclick="toggleUserStatus('${u.id}')" class="px-3 py-1.5 rounded-lg glass-card font-bold hover:border-blue-500">
+                        ${u.status === 'active' ? 'Tangguhkan' : 'Aktifkan'}
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : ''}
+
+          ${state.adminTab === 'transactions' ? `
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500">
+                  <th class="py-3 px-2">ID Order</th>
+                  <th class="py-3 px-2">Barang</th>
+                  <th class="py-3 px-2">Pembeli → Penjual</th>
+                  <th class="py-3 px-2">Status Transaksi</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200/50 dark:divide-slate-800">
+                ${state.orders.map(o => {
+                  const p = getProductById(o.productId);
+                  const b = getUserById(o.buyerId);
+                  const s = getUserById(o.sellerId);
+                  return `
+                    <tr>
+                      <td class="py-3 px-2 font-mono">${o.id}</td>
+                      <td class="py-3 px-2 font-semibold">${p?.name || '-'}</td>
+                      <td class="py-3 px-2">${b.name} → ${s.name}</td>
+                      <td class="py-3 px-2 font-bold text-blue-600 dark:text-blue-400">${o.status}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          ` : ''}
+
+          ${state.adminTab === 'activity' ? `
+            <div class="flex justify-between items-center mb-3 gap-2 flex-wrap"><p class="text-xs text-slate-500">Riwayat login, upload, transaksi dan moderasi yang tercatat di Firebase.</p><button onclick="syncNow()" class="px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold">Sinkronkan Google Sheets</button></div>
+            <div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="border-b border-slate-200 dark:border-slate-700"><th class="p-2">Waktu</th><th class="p-2">Pengguna</th><th class="p-2">Aktivitas</th><th class="p-2">Keterangan</th></tr></thead><tbody>${(state.activity || []).slice(0,150).map(a=>`<tr class="border-b border-slate-200/50 dark:border-slate-800"><td class="p-2 whitespace-nowrap">${new Date(a.createdAt).toLocaleString('id-ID')}</td><td class="p-2">${getUserById(a.uid).name}</td><td class="p-2 font-bold">${a.action}</td><td class="p-2">${a.details || '-'}</td></tr>`).join('')}</tbody></table></div>
+          ` : ''}
+
+          ${state.adminTab === 'reports' ? `
+            <div class="space-y-3">
+              ${state.reports.length === 0 ? '<p class="text-xs text-slate-500">Tidak ada laporan masuk.</p>' : state.reports.map(r => {
+                const targetProduct = getProductById(r.targetId);
+                const reporter = getUserById(r.reporterId);
+                return `
+                  <div class="p-4 rounded-2xl glass-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${r.status === 'pending' ? 'bg-amber-500 text-white' : 'bg-slate-500 text-white'}">${r.status.toUpperCase()}</span>
+                        <span class="font-bold">Target: ${targetProduct ? targetProduct.name : r.targetId}</span>
+                      </div>
+                      <p class="text-slate-600 dark:text-slate-300 mt-1">Alasan: "${r.reason}"</p>
+                      <p class="text-[11px] text-slate-400 mt-0.5">Pelapor: ${reporter.name} (${reporter.fakultas})</p>
+                    </div>
+                    ${r.status === 'pending' ? `
+                      <div class="flex gap-2 shrink-0">
+                        <button onclick="resolveReport('${r.id}', 'resolved')" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-bold">Tindak & Hapus Produk</button>
+                        <button onclick="resolveReport('${r.id}', 'dismissed')" class="px-3 py-1.5 rounded-xl glass-card font-semibold">Abaikan</button>
+                      </div>
+                    ` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function toggleUserStatus(userId) {
+      const user = getUserById(userId);
+      if (!user) return;
+      user.status = user.status === 'active' ? 'suspended' : 'active';
+      showToast('Status Pengguna Diubah', `${user.name} kini berstatus ${user.status}.`, 'info');
+      renderCurrentView();
+    }
+
+    function resolveReport(reportId, action) {
+      const report = state.reports.find(r => r.id === reportId);
+      if (!report) return;
+      report.status = action;
+      if (action === 'resolved' && report.targetType === 'product') {
+        state.products = state.products.filter(p => p.id !== report.targetId);
+        showToast('Laporan Ditindaklanjuti', 'Produk terlapor telah dihapus oleh Admin.', 'success');
+      } else {
+        showToast('Laporan Ditutup', 'Laporan ditandai selesai.', 'info');
+      }
+      renderCurrentView();
+    }
+
+    // =========================================================================
+    // 15. INITIALIZATION ON WINDOW LOAD
+    // =========================================================================
+    window.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('notif-dropdown');
+      if (dropdown && !dropdown.classList.contains('hidden')) {
+        if (!e.target.closest('#notif-dropdown') && !e.target.closest('[onclick="toggleNotificationPanel()"]')) {
+          dropdown.classList.add('hidden');
+        }
+      }
+    });
+
+    window.onload = function() {
+      renderChrome();
+      renderCurrentView();
+    };
+  </script>
+  <!-- Firebase compat SDK: kompatibel dengan script HTML klasik di atas -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script defer src="firebase-config.js"></script>
+  <script defer src="integration.js"></script>
+</body>
+</html>
